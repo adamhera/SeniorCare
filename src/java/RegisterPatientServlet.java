@@ -7,6 +7,8 @@
  *
  * @author adamh
  */
+import bean.RegisterBean;
+import dao.RegisterDao;
 import java.io.IOException;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -19,6 +21,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import javax.servlet.RequestDispatcher;
 
 @WebServlet(urlPatterns = {"/RegisterPatientServlet"})
 public class RegisterPatientServlet extends HttpServlet {
@@ -41,9 +44,13 @@ public class RegisterPatientServlet extends HttpServlet {
         String phone = request.getParameter("phone");
         String address = request.getParameter("address");
         String email = request.getParameter("email");
-
+        String password = request.getParameter("password");
+        
+        
+        RegisterBean registerBean = new RegisterBean(firstName, lastName, phone, address, email, password);
+        RegisterDao registerDao = new RegisterDao();
         // Database insertion logic
-        try {
+        /*try {
             // Establish connection
             Connection conn = DriverManager.getConnection("jdbc:derby://localhost:1527/SeniorCareDB", "app", "app");
             String query = "INSERT INTO Patient (Patient_FName, Patient_LName, Patient_Phone, Patient_Address, Patient_Email) VALUES (?, ?, ?, ?, ?)";
@@ -63,8 +70,16 @@ public class RegisterPatientServlet extends HttpServlet {
         } catch (SQLException e) {
             e.printStackTrace();
             
+        }*/
+        
+        String result = registerDao.registerUser(registerBean);
+        if (result.equals("success")) {
+            RequestDispatcher dispatcher = request.getRequestDispatcher("/login.jsp");
+            dispatcher.forward(request, response);
+        } else {
+            RequestDispatcher dispatcher = request.getRequestDispatcher("/register.jsp");
+            dispatcher.forward(request, response);
         }
-
         // Redirect to a confirmation page or patient list
         response.sendRedirect("ListPatientsServlet");
     }
