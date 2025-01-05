@@ -25,11 +25,13 @@ public class EmployeeRegisterServlet extends HttpServlet {
         String email = request.getParameter("email");
         String gender = request.getParameter("gender");
         String role = request.getParameter("role");
-        String status = request.getParameter("status");
+        String status = "Pending"; // Default status for new employees
         String password = request.getParameter("password");
         
-         RegisterBeanEmployee registerBean = new RegisterBeanEmployee(name, email, gender, role, status, password);
+        RegisterBeanEmployee registerBean = new RegisterBeanEmployee(name, email, role, status, gender, password);
+
         RegisterDaoEmployee registerDao = new RegisterDaoEmployee();
+        String result = registerDao.registerUser(registerBean);
         /*try {
             Class.forName("org.apache.derby.jdbc.ClientDriver");
             System.out.println("Driver loaded successfully!");
@@ -58,11 +60,12 @@ public class EmployeeRegisterServlet extends HttpServlet {
             response.getWriter().println("Error: " + e.getMessage());
         }*/
         
-        String result = registerDao.registerUser(registerBean);
+        
         if (result.equals("success")) {
-            RequestDispatcher dispatcher = request.getRequestDispatcher("/nurseLogin.jsp");
+            RequestDispatcher dispatcher = request.getRequestDispatcher("pendingApproval.jsp");
             dispatcher.forward(request, response);
         } else {
+            request.setAttribute("errorMessage", "Registration failed. Please try again.");
             RequestDispatcher dispatcher = request.getRequestDispatcher("/employeeRegister.jsp");
             dispatcher.forward(request, response);
         }

@@ -5,25 +5,27 @@
  */
 package bean;
 
-/**
- *
- * @author adamh
- */
 import java.io.Serializable;
 
 public class LoginBeanEmployee implements Serializable {
-    private String username;
+    private String email;  // Renamed from 'username' to 'email' for clarity
     private String password;
-    private String role;
+    private String role;   // This stores the user's role (e.g., Admin, Nurse)
 
-    public String getUsername() {
-        return username;
+    public LoginBeanEmployee(String email, String password) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    // Getter and Setter for email
+    public String getEmail() {
+        return email;
     }
 
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    // Getter and Setter for password
     public String getPassword() {
         return password;
     }
@@ -32,6 +34,7 @@ public class LoginBeanEmployee implements Serializable {
         this.password = password;
     }
 
+    // Getter and Setter for role
     public String getRole() {
         return role;
     }

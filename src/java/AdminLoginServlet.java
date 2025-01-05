@@ -2,7 +2,7 @@
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
- */
+
 
 
 import bean.LoginBeanEmployee;
@@ -64,3 +64,4 @@ public class AdminLoginServlet extends HttpServlet {
         return "Handles patient login functionality";
     }
 }
+*/

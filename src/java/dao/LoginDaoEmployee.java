@@ -16,7 +16,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import util.DBConnection;
 
-public class LoginDaoEmployee {
+/*public class LoginDaoEmployee {
 
     /**
      * Authenticate an employee based on username, password, and role.
@@ -24,7 +24,7 @@ public class LoginDaoEmployee {
      * @param loginBean The LoginBeanEmployee containing credentials and role.
      * @return "SUCCESS" if authentication is successful, otherwise an error message.
      * @throws SQLException If a database access error occurs.
-     */
+    
     public String authenticateEmployee(LoginBeanEmployee loginBean) throws SQLException {
         String username = loginBean.getUsername();
         String password = loginBean.getPassword();
@@ -51,4 +51,37 @@ public class LoginDaoEmployee {
             throw e;
         }
     }
+}*/
+
+
+
+public class LoginDaoEmployee {
+
+public String authenticateUser(LoginBeanEmployee loginBean) {
+    String email = loginBean.getEmail();
+    String password = loginBean.getPassword();
+    String role = null;
+
+    try {
+        Connection connection = DBConnection.getConnection(); // Assuming you have a DatabaseConnection class
+        String query = "SELECT role FROM employees WHERE email = ? AND password = ?";
+        PreparedStatement statement = connection.prepareStatement(query);
+        statement.setString(1, email);
+        statement.setString(2, password);
+        ResultSet resultSet = statement.executeQuery();
+
+        if (resultSet.next()) {
+            role = resultSet.getString("role");
+        }
+
+        resultSet.close();
+        statement.close();
+        connection.close();
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+
+    return role;
+}
+
 }
