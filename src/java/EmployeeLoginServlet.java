@@ -22,23 +22,25 @@ import javax.servlet.http.HttpSession;
 
 @WebServlet("/EmployeeLoginServlet")
 public class EmployeeLoginServlet extends HttpServlet {
+
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
         String email = request.getParameter("email");
         String password = request.getParameter("password");
 
-        LoginBeanEmployee loginBean = new LoginBeanEmployee(email, password);
+        LoginBeanEmployee loginBean = new LoginBeanEmployee();
+        loginBean.setEmail(email);
+        loginBean.setPassword(password);
 
         LoginDaoEmployee loginDao = new LoginDaoEmployee();
         String role = loginDao.authenticateUser(loginBean); // Fetch role from the database
 
-        if (role != null) {
+        if ("SUCCESS".equals(role)) {
             HttpSession session = request.getSession();
-            session.setAttribute("userRole", role); // Store the role in session
-            session.setAttribute("userEmail", email); // Store user email in session
+            session.setAttribute("empRole", role); // Store the role in session
+            session.setAttribute("empEmail", email); // Store user email in session
             
-            // Redirect based on the role fetched from the database
             if ("Admin".equalsIgnoreCase(role)) {
                 response.sendRedirect("adminDashboard.jsp"); // Redirect to admin dashboard
             } else if ("Nurse".equalsIgnoreCase(role)) {
@@ -69,7 +71,7 @@ public class EmployeeLoginServlet extends HttpServlet {
 
     @Override
     public String getServletInfo() {
-        return "Handles employee login functionality";
+        return "Handles patient login functionality";
     }
 }
 

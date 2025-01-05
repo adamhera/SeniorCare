@@ -12,9 +12,16 @@ public class LoginBeanEmployee implements Serializable {
     private String password;
     private String role;   // This stores the user's role (e.g., Admin, Nurse)
 
-    public LoginBeanEmployee(String email, String password) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public LoginBeanEmployee() {
     }
+
+    public LoginBeanEmployee(String email, String password, String role) {
+        this.email = email;
+        this.password = password;
+        this.role = role;
+    }
+
+    
 
     // Getter and Setter for email
     public String getEmail() {

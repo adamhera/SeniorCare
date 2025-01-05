@@ -3,13 +3,13 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/adamh/Documents/NetbeansProject/SeniorCare/web/employeeRegister.jsp</file>
-            <file>file:/C:/Users/adamh/Documents/NetbeansProject/SeniorCare/src/java/dao/RegisterDao.java</file>
-            <file>file:/C:/Users/adamh/Documents/NetbeansProject/SeniorCare/src/java/RegisterPatientServlet.java</file>
-            <file>file:/C:/Users/adamh/Documents/NetbeansProject/SeniorCare/src/java/bean/RegisterBeanEmployee.java</file>
-            <file>file:/C:/Users/adamh/Documents/NetbeansProject/SeniorCare/src/java/EmployeeRegisterServlet.java</file>
-            <file>file:/C:/Users/adamh/Documents/NetbeansProject/SeniorCare/src/java/bean/RegisterBean.java</file>
-            <file>file:/C:/Users/adamh/Documents/NetbeansProject/SeniorCare/src/java/dao/RegisterDaoEmployee.java</file>
+            <file>file:/C:/Users/adamh/Documents/NetbeansProject/SeniorCare/src/java/bean/LoginBean.java</file>
+            <file>file:/C:/Users/adamh/Documents/NetbeansProject/SeniorCare/web/employeeLogin.jsp</file>
+            <file>file:/C:/Users/adamh/Documents/NetbeansProject/SeniorCare/src/java/dao/LoginDaoEmployee.java</file>
+            <file>file:/C:/Users/adamh/Documents/NetbeansProject/SeniorCare/src/java/EmployeeLoginServlet.java</file>
+            <file>file:/C:/Users/adamh/Documents/NetbeansProject/SeniorCare/src/java/bean/LoginBeanEmployee.java</file>
+            <file>file:/C:/Users/adamh/Documents/NetbeansProject/SeniorCare/src/java/dao/LoginDao.java</file>
+            <file>file:/C:/Users/adamh/Documents/NetbeansProject/SeniorCare/src/java/LoginPatientServlet.java</file>
         </group>
     </open-files>
 </project-private>

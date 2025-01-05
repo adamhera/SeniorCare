@@ -57,31 +57,33 @@ import util.DBConnection;
 
 public class LoginDaoEmployee {
 
-public String authenticateUser(LoginBeanEmployee loginBean) {
-    String email = loginBean.getEmail();
-    String password = loginBean.getPassword();
-    String role = null;
+    public String authenticateUser(LoginBeanEmployee loginBean) {
+        String email = loginBean.getEmail();
+        String password = loginBean.getPassword();
 
-    try {
-        Connection connection = DBConnection.getConnection(); // Assuming you have a DatabaseConnection class
-        String query = "SELECT role FROM employees WHERE email = ? AND password = ?";
-        PreparedStatement statement = connection.prepareStatement(query);
-        statement.setString(1, email);
-        statement.setString(2, password);
-        ResultSet resultSet = statement.executeQuery();
+        String sql = "SELECT EMP_ROLE, STATUS FROM APP.EMPLOYEE WHERE EMP_EMAIL = ? AND EMP_PASSWORD = ?";
 
-        if (resultSet.next()) {
-            role = resultSet.getString("role");
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement preparedStatement = conn.prepareStatement(sql)) {
+
+            preparedStatement.setString(1, email);
+            preparedStatement.setString(2, password);
+
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            if (resultSet.next()) {
+                String role = resultSet.getString("EMP_ROLE");
+                String status = resultSet.getString("STATUS");
+
+                if ("Pending".equalsIgnoreCase(status)) {
+                    return "pending"; // Optional, handle pending status
+                } else {
+                    return role; // Return role (Admin or Nurse)
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
-
-        resultSet.close();
-        statement.close();
-        connection.close();
-    } catch (SQLException e) {
-        e.printStackTrace();
+        return null; // Return null for invalid credentials
     }
-
-    return role;
-}
-
 }

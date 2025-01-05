@@ -65,14 +65,15 @@ public final class employeeLogin_jsp extends org.apache.jasper.runtime.HttpJspBa
       out.write("\n");
       out.write("\n");
       out.write("    <form action=\"EmployeeLoginServlet\" method=\"POST\">\n");
-      out.write("        <label for=\"email\">Email:</label>\n");
-      out.write("        <input type=\"email\" id=\"email\" name=\"email\" required><br><br>\n");
+      out.write("       <label for=\"email\">Email:</label>\n");
+      out.write("       <input type=\"email\" id=\"email\" name=\"email\" required><br><br>\n");
       out.write("\n");
-      out.write("        <label for=\"password\">Password:</label>\n");
-      out.write("        <input type=\"password\" id=\"password\" name=\"password\" required><br><br>\n");
+      out.write("       <label for=\"password\">Password:</label>\n");
+      out.write("       <input type=\"password\" id=\"password\" name=\"password\" required><br><br>\n");
       out.write("\n");
-      out.write("        <input type=\"submit\" value=\"Login\">\n");
-      out.write("    </form>\n");
+      out.write("       <input type=\"submit\" value=\"Login\">\n");
+      out.write("   </form>\n");
+      out.write("\n");
       out.write("</body>\n");
       out.write("</html>\n");
     } catch (Throwable t) {

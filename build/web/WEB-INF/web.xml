@@ -23,12 +23,12 @@
     </servlet-mapping>
 
     <servlet>
-        <servlet-name>EmployeePatientServlet</servlet-name>
-        <servlet-class>EmployeePatientServlet</servlet-class>
+        <servlet-name>EmployeeLoginServlet</servlet-name>
+        <servlet-class>EmployeeLoginServlet</servlet-class>
     </servlet>
     <servlet-mapping>
-        <servlet-name>EmployeePatientServlet</servlet-name>
-        <url-pattern>/EmployeePatientServlet</url-pattern>
+        <servlet-name>EmployeeLoginServlet</servlet-name>
+        <url-pattern>/EmployeeLoginServlet</url-pattern>
     </servlet-mapping>
 
 </web-app>
