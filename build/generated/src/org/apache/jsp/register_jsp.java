@@ -4,7 +4,7 @@ import javax.servlet.*;
 import javax.servlet.http.*;
 import javax.servlet.jsp.*;
 
-public final class nurseLogin_jsp extends org.apache.jasper.runtime.HttpJspBase
+public final class register_jsp extends org.apache.jasper.runtime.HttpJspBase
     implements org.apache.jasper.runtime.JspSourceDependent {
 
   private static final JspFactory _jspxFactory = JspFactory.getDefaultFactory();
@@ -30,7 +30,7 @@ public final class nurseLogin_jsp extends org.apache.jasper.runtime.HttpJspBase
     PageContext _jspx_page_context = null;
 
     try {
-      response.setContentType("text/html");
+      response.setContentType("text/html; charset=UTF-8");
       pageContext = _jspxFactory.getPageContext(this, request, response,
       			null, true, 8192, true);
       _jspx_page_context = pageContext;
@@ -43,35 +43,34 @@ public final class nurseLogin_jsp extends org.apache.jasper.runtime.HttpJspBase
 
       out.write("\n");
       out.write("\n");
+      out.write("\n");
       out.write("<!DOCTYPE html>\n");
       out.write("<html>\n");
       out.write("<head>\n");
-      out.write("    <title>Nurse Login</title>\n");
+      out.write("    <title>Patient Registration</title>\n");
       out.write("</head>\n");
       out.write("<body>\n");
-      out.write("    <h2>Nurse Login</h2>\n");
+      out.write("    <h1>Register Patient</h1>\n");
+      out.write("    <form action=\"RegisterPatientServlet\" method=\"post\">\n");
+      out.write("        <label for=\"firstName\">First Name:</label>\n");
+      out.write("        <input type=\"text\" id=\"firstName\" name=\"firstName\" required><br><br>\n");
       out.write("\n");
-      out.write("    <!-- Display error message if set in the request -->\n");
-      out.write("    ");
- String errorMessage = (String) request.getAttribute("errorMessage"); 
+      out.write("        <label for=\"lastName\">Last Name:</label>\n");
+      out.write("        <input type=\"text\" id=\"lastName\" name=\"lastName\" required><br><br>\n");
       out.write("\n");
-      out.write("    ");
- if (errorMessage != null) { 
+      out.write("        <label for=\"phone\">Phone:</label>\n");
+      out.write("        <input type=\"text\" id=\"phone\" name=\"phone\" required><br><br>\n");
       out.write("\n");
-      out.write("        <p style=\"color: red;\">");
-      out.print( errorMessage );
-      out.write("</p>\n");
-      out.write("    ");
- } 
+      out.write("        <label for=\"address\">Address:</label>\n");
+      out.write("        <input type=\"text\" id=\"address\" name=\"address\" required><br><br>\n");
       out.write("\n");
-      out.write("\n");
-      out.write("    <form action=\"NurseLoginServlet\" method=\"POST\">\n");
       out.write("        <label for=\"email\">Email:</label>\n");
       out.write("        <input type=\"email\" id=\"email\" name=\"email\" required><br><br>\n");
-      out.write("        \n");
+      out.write("\n");
       out.write("        <label for=\"password\">Password:</label>\n");
       out.write("        <input type=\"password\" id=\"password\" name=\"password\" required><br><br>\n");
-      out.write("        <input type=\"submit\" value=\"Login\">\n");
+      out.write("        \n");
+      out.write("        <input type=\"submit\" value=\"Register\">\n");
       out.write("    </form>\n");
       out.write("</body>\n");
       out.write("</html>\n");
