@@ -4,10 +4,13 @@
  * and open the template in the editor.
  */
 
+import bean.RegisterBeanEmployee;
+import dao.RegisterDaoEmployee;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -22,8 +25,12 @@ public class EmployeeRegisterServlet extends HttpServlet {
         String email = request.getParameter("email");
         String gender = request.getParameter("gender");
         String role = request.getParameter("role");
-
-        try {
+        String status = request.getParameter("status");
+        String password = request.getParameter("password");
+        
+         RegisterBeanEmployee registerBean = new RegisterBeanEmployee(name, email, gender, role, status, password);
+        RegisterDaoEmployee registerDao = new RegisterDaoEmployee();
+        /*try {
             Class.forName("org.apache.derby.jdbc.ClientDriver");
             System.out.println("Driver loaded successfully!");
 
@@ -49,7 +56,18 @@ public class EmployeeRegisterServlet extends HttpServlet {
         } catch (Exception e) {
             e.printStackTrace();
             response.getWriter().println("Error: " + e.getMessage());
+        }*/
+        
+        String result = registerDao.registerUser(registerBean);
+        if (result.equals("success")) {
+            RequestDispatcher dispatcher = request.getRequestDispatcher("/nurseLogin.jsp");
+            dispatcher.forward(request, response);
+        } else {
+            RequestDispatcher dispatcher = request.getRequestDispatcher("/employeeRegister.jsp");
+            dispatcher.forward(request, response);
         }
+        // Redirect to a confirmation page or patient list
+        //response.sendRedirect("ListPatientsServlet");
     }
-}
+ }
 

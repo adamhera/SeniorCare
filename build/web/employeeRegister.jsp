@@ -4,7 +4,7 @@
     Author     : adamh
 --%>
 
-<%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@ page contentType="text/html" pageEncoding="UTF-8" %>
 <!DOCTYPE html>
 <html>
     <head>
@@ -13,26 +13,33 @@
     </head>
     <body>
         <form action="EmployeeRegisterServlet" method="POST">
-       <label for="name">Name:</label>
-       <input type="text" id="name" name="name" required><br>
+            <label for="name">Name:</label>
+            <input type="text" id="name" name="name" required><br>
 
-       <label for="email">Email:</label>
-       <input type="email" id="email" name="email" required><br>
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" required><br>
+               
+            
+            <label for="role">Role:</label>
+            <select id="role" name="role">
+                <option value="Nurse">Nurse</option>
+                <option value="Admin">Admin</option>
+            </select><br> 
+            
+            <label for="gender">Gender:</label>
+            <select id="gender" name="gender">
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+            </select><br>
 
-       <label for="gender">Gender:</label>
-       <select id="gender" name="gender">
-           <option value="Male">Male</option>
-           <option value="Female">Female</option>
-       </select><br>
+          
 
-       <label for="role">Role:</label>
-       <select id="role" name="role">
-           <option value="Nurse">Nurse</option>
-           <option value="Admin">Admin</option>
-       </select><br>
+            
 
-       <input type="submit" value="Register">
-   </form>
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" required><br>
 
+            <input type="submit" value="Register">
+        </form>
     </body>
 </html>
