@@ -57,33 +57,22 @@ import util.DBConnection;
 
 public class LoginDaoEmployee {
 
-    public String authenticateUser(LoginBeanEmployee loginBean) {
+    public boolean authenticateUser(LoginBeanEmployee loginBean) {
         String email = loginBean.getEmail();
         String password = loginBean.getPassword();
 
-        String sql = "SELECT EMP_ROLE, STATUS FROM APP.EMPLOYEE WHERE EMP_EMAIL = ? AND EMP_PASSWORD = ?";
-
-        try (Connection conn = DBConnection.getConnection();
+        String sql = "SELECT * FROM EMPLOYEE WHERE EMP_EMAIL = ? AND EMP_PASSWORD = ?";
+        try (Connection conn = DBConnection.createConnection();
              PreparedStatement preparedStatement = conn.prepareStatement(sql)) {
 
             preparedStatement.setString(1, email);
             preparedStatement.setString(2, password);
 
             ResultSet resultSet = preparedStatement.executeQuery();
-
-            if (resultSet.next()) {
-                String role = resultSet.getString("EMP_ROLE");
-                String status = resultSet.getString("STATUS");
-
-                if ("Pending".equalsIgnoreCase(status)) {
-                    return "pending"; // Optional, handle pending status
-                } else {
-                    return role; // Return role (Admin or Nurse)
-                }
-            }
+            return resultSet.next(); // Return true if the user exists
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return null; // Return null for invalid credentials
+        return false;
     }
 }

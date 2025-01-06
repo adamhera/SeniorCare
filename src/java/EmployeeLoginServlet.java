@@ -28,35 +28,35 @@ public class EmployeeLoginServlet extends HttpServlet {
 
         String email = request.getParameter("email");
         String password = request.getParameter("password");
+        String role = request.getParameter("role"); // Get the role from the form
 
         LoginBeanEmployee loginBean = new LoginBeanEmployee();
         loginBean.setEmail(email);
         loginBean.setPassword(password);
+        loginBean.setRole(role);
 
         LoginDaoEmployee loginDao = new LoginDaoEmployee();
-        String role = loginDao.authenticateUser(loginBean); // Fetch role from the database
+        boolean isAuthenticated = loginDao.authenticateUser(loginBean); // Simplify the DAO
 
-        if ("SUCCESS".equals(role)) {
+        if (isAuthenticated) {
             HttpSession session = request.getSession();
-            session.setAttribute("empRole", role); // Store the role in session
-            session.setAttribute("empEmail", email); // Store user email in session
-            
+            session.setAttribute("role", role); // Store the role in session
+            session.setAttribute("email", email); // Store user email in session
+
             if ("Admin".equalsIgnoreCase(role)) {
                 response.sendRedirect("adminDashboard.jsp"); // Redirect to admin dashboard
             } else if ("Nurse".equalsIgnoreCase(role)) {
                 response.sendRedirect("nurseDashboard.jsp"); // Redirect to nurse dashboard
             } else {
                 request.setAttribute("errorMessage", "Unknown role.");
-                RequestDispatcher dispatcher = request.getRequestDispatcher("employeeLogin.jsp");
-                dispatcher.forward(request, response);
+                request.getRequestDispatcher("employeeLogin.jsp").forward(request, response);
             }
         } else {
             request.setAttribute("errorMessage", "Invalid email or password.");
-            RequestDispatcher dispatcher = request.getRequestDispatcher("employeeLogin.jsp");
-            dispatcher.forward(request, response);
+            request.getRequestDispatcher("employeeLogin.jsp").forward(request, response);
         }
     }
-    
+
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -71,9 +71,10 @@ public class EmployeeLoginServlet extends HttpServlet {
 
     @Override
     public String getServletInfo() {
-        return "Handles patient login functionality";
+        return "Handles employee login functionality";
     }
 }
+
 
 
 

@@ -30,7 +30,7 @@ public final class employeeLogin_jsp extends org.apache.jasper.runtime.HttpJspBa
     PageContext _jspx_page_context = null;
 
     try {
-      response.setContentType("text/html");
+      response.setContentType("text/html; charset=UTF-8");
       pageContext = _jspxFactory.getPageContext(this, request, response,
       			null, true, 8192, true);
       _jspx_page_context = pageContext;
@@ -43,37 +43,36 @@ public final class employeeLogin_jsp extends org.apache.jasper.runtime.HttpJspBa
 
       out.write("\n");
       out.write("\n");
+      out.write("\n");
+      out.write("\n");
       out.write("<!DOCTYPE html>\n");
       out.write("<html>\n");
       out.write("<head>\n");
-      out.write("    <title>Login</title>\n");
+      out.write("    <title>Employee Login</title>\n");
       out.write("</head>\n");
       out.write("<body>\n");
       out.write("    <h2>Employee Login</h2>\n");
       out.write("\n");
-      out.write("    ");
- String errorMessage = (String) request.getAttribute("errorMessage"); 
-      out.write("\n");
-      out.write("    ");
- if (errorMessage != null) { 
-      out.write("\n");
-      out.write("        <p style=\"color: red;\">");
-      out.print( errorMessage );
-      out.write("</p>\n");
-      out.write("    ");
- } 
-      out.write("\n");
-      out.write("\n");
       out.write("    <form action=\"EmployeeLoginServlet\" method=\"POST\">\n");
-      out.write("       <label for=\"email\">Email:</label>\n");
-      out.write("       <input type=\"email\" id=\"email\" name=\"email\" required><br><br>\n");
+      out.write("        <label for=\"email\">Email:</label>\n");
+      out.write("        <input type=\"email\" id=\"email\" name=\"email\" required><br><br>\n");
       out.write("\n");
-      out.write("       <label for=\"password\">Password:</label>\n");
-      out.write("       <input type=\"password\" id=\"password\" name=\"password\" required><br><br>\n");
+      out.write("        <label for=\"password\">Password:</label>\n");
+      out.write("        <input type=\"password\" id=\"password\" name=\"password\" required><br><br>\n");
       out.write("\n");
-      out.write("       <input type=\"submit\" value=\"Login\">\n");
-      out.write("   </form>\n");
+      out.write("        <label for=\"role\">Role:</label>\n");
+      out.write("        <select id=\"role\" name=\"role\" required>\n");
+      out.write("            <option value=\"Admin\">Admin</option>\n");
+      out.write("            <option value=\"Nurse\">Nurse</option>\n");
+      out.write("        </select><br><br>\n");
       out.write("\n");
+      out.write("        <input type=\"submit\" value=\"Login\">\n");
+      out.write("    </form>\n");
+      out.write("    <p style=\"color: red;\">\n");
+      out.write("        ");
+      out.write((java.lang.String) org.apache.jasper.runtime.PageContextImpl.evaluateExpression("${errorMessage != null ? errorMessage : \"\"}", java.lang.String.class, (PageContext)_jspx_page_context, null));
+      out.write("\n");
+      out.write("    </p>\n");
       out.write("</body>\n");
       out.write("</html>\n");
     } catch (Throwable t) {
