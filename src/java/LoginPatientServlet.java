@@ -40,7 +40,7 @@ public class LoginPatientServlet extends HttpServlet {
         if ("SUCCESS".equals(loginResult)) {
             HttpSession session = request.getSession();
             session.setAttribute("patientEmail", email);
-            response.sendRedirect("patientDashboard.jsp");
+            response.sendRedirect("patientDasboard.jsp");
         } else {
             request.setAttribute("errorMessage", loginResult);
             request.getRequestDispatcher("login.jsp").forward(request, response);

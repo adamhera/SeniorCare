@@ -19,8 +19,9 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import util.DBConnection;
 
-@WebServlet("/BookingServlet")
+/*@WebServlet("/BookingServlet")
 public class BookingServlet extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -63,4 +64,36 @@ public class BookingServlet extends HttpServlet {
             throws ServletException, IOException {
         processRequest(request, response);
     }
+}*/
+
+@WebServlet("/BookingServlet")
+public class BookingServlet extends HttpServlet {
+
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        int packageID = Integer.parseInt(request.getParameter("packageID"));
+        int patientID = (int) request.getSession().getAttribute("patientID");
+
+        try (Connection conn = DBConnection.createConnection()) {
+            String query = "INSERT INTO Booking (Patient_ID, Package_ID, Booking_Date, Booking_Time, Status) " +
+                           "VALUES (?, ?, CURRENT_DATE, CURRENT_TIME, 'Pending')";
+            PreparedStatement stmt = conn.prepareStatement(query);
+            stmt.setInt(1, patientID);
+            stmt.setInt(2, packageID);
+            int rowsInserted = stmt.executeUpdate();
+
+            if (rowsInserted > 0) {
+                request.setAttribute("message", "Booking successful!");
+            } else {
+                request.setAttribute("message", "Failed to book the package.");
+            }
+            stmt.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+            request.setAttribute("message", "An error occurred: " + e.getMessage());
+        }
+
+        request.getRequestDispatcher("patientDashboard.jsp").forward(request, response);
+    }
 }
+
