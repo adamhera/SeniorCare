@@ -3,11 +3,10 @@
     Created on : Dec 28, 2024, 9:20:15 PM
     Author     : adamh
 --%>
-
 <%@ page session="true" %>
 <%
     if (session.getAttribute("nurseID") == null) {
-        response.sendRedirect("nurseLogin.jsp");
+        response.sendRedirect("employeeLogin.jsp");
         return;
     }
 %>
@@ -20,4 +19,5 @@
     <h2>Welcome, <%= session.getAttribute("nurseName") %>!</h2>
     <a href="LogoutServlet">Logout</a>
 </body>
+</html>
 </html>

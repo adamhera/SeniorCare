@@ -57,22 +57,22 @@ import util.DBConnection;
 
 public class LoginDaoEmployee {
 
-    public boolean authenticateUser(LoginBeanEmployee loginBean) {
-        String email = loginBean.getEmail();
-        String password = loginBean.getPassword();
+public String authenticateAndFetchName(LoginBeanEmployee loginBean) {
+    String query = "SELECT EMP_ROLE, EMP_NAME FROM EMPLOYEE WHERE EMP_EMAIL = ? AND EMP_PASSWORD = ?";
+    try (Connection con = DBConnection.createConnection();
+         PreparedStatement ps = con.prepareStatement(query)) {
 
-        String sql = "SELECT * FROM EMPLOYEE WHERE EMP_EMAIL = ? AND EMP_PASSWORD = ?";
-        try (Connection conn = DBConnection.createConnection();
-             PreparedStatement preparedStatement = conn.prepareStatement(sql)) {
-
-            preparedStatement.setString(1, email);
-            preparedStatement.setString(2, password);
-
-            ResultSet resultSet = preparedStatement.executeQuery();
-            return resultSet.next(); // Return true if the user exists
-        } catch (SQLException e) {
-            e.printStackTrace();
+        ps.setString(1, loginBean.getEmail());
+        ps.setString(2, loginBean.getPassword());
+        try (ResultSet rs = ps.executeQuery()) {
+            if (rs.next() && rs.getString("EMP_ROLE").equalsIgnoreCase(loginBean.getRole())) {
+                return rs.getString("EMP_NAME"); // Return the name if role matches
+            }
         }
-        return false;
+    } catch (SQLException e) {
+        e.printStackTrace();
     }
+    return null; // Return null if authentication fails
+}
+
 }

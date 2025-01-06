@@ -12,7 +12,6 @@
 import bean.LoginBeanEmployee;
 import dao.LoginDaoEmployee;
 import java.io.IOException;
-import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -36,17 +35,17 @@ public class EmployeeLoginServlet extends HttpServlet {
         loginBean.setRole(role);
 
         LoginDaoEmployee loginDao = new LoginDaoEmployee();
-        boolean isAuthenticated = loginDao.authenticateUser(loginBean); // Simplify the DAO
+        String nurseName = loginDao.authenticateAndFetchName(loginBean); // Fetch nurse name if authentication is successful
 
-        if (isAuthenticated) {
+        if (nurseName != null) {
             HttpSession session = request.getSession();
-            session.setAttribute("role", role); // Store the role in session
-            session.setAttribute("email", email); // Store user email in session
+            session.setAttribute("nurseID", email); // Store email (or unique ID)
+            session.setAttribute("nurseName", nurseName); // Store nurse name
 
             if ("Admin".equalsIgnoreCase(role)) {
-                response.sendRedirect("adminDashboard.jsp"); // Redirect to admin dashboard
+                response.sendRedirect("adminDashboard.jsp");
             } else if ("Nurse".equalsIgnoreCase(role)) {
-                response.sendRedirect("nurseDashboard.jsp"); // Redirect to nurse dashboard
+                response.sendRedirect("nurseDashboard.jsp");
             } else {
                 request.setAttribute("errorMessage", "Unknown role.");
                 request.getRequestDispatcher("employeeLogin.jsp").forward(request, response);

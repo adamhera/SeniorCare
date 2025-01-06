@@ -18,7 +18,7 @@
         <p style="color: red;"><%= errorMessage %></p>
     <% } %>
 
-    <form action="NurseLoginServlet" method="POST">
+    <form action="EmployeeLoginServlet" method="POST">
         <label for="email">Email:</label>
         <input type="email" id="email" name="email" required><br><br>
         
