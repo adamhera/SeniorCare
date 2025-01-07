@@ -22,6 +22,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import util.DBConnection;
+
 
 @WebServlet("/LoginPatientServlet")
 public class LoginPatientServlet extends HttpServlet {
@@ -32,22 +34,28 @@ public class LoginPatientServlet extends HttpServlet {
         String email = request.getParameter("email");
         String password = request.getParameter("password");
 
-        LoginBean loginBean = new LoginBean(email, password);
+        LoginBean loginBean = new LoginBean();
+        loginBean.setEmail(email);
+        loginBean.setPassword(password);
+
         LoginDao loginDao = new LoginDao();
 
-        String loginResult = loginDao.authenticateUser(loginBean);
+        int patientID = loginDao.authenticatePatient(loginBean);
+        if (patientID > 0) {
+            // Fetch patient details (e.g., name) from the database
+            String patientName = loginDao.getPatientName(patientID);
 
-        if ("SUCCESS".equals(loginResult)) {
             HttpSession session = request.getSession();
-            session.setAttribute("patientEmail", email);
+            session.setAttribute("patientID", patientID);
+            session.setAttribute("patientName", patientName);
+
             response.sendRedirect("patientDasboard.jsp");
         } else {
-            request.setAttribute("errorMessage", loginResult);
+            // Authentication failed
+            request.setAttribute("errorMessage", "Invalid email or password.");
             request.getRequestDispatcher("login.jsp").forward(request, response);
         }
     }
-
-
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -60,10 +68,5 @@ public class LoginPatientServlet extends HttpServlet {
             throws ServletException, IOException {
         processRequest(request, response);
     }
-
-    @Override
-    public String getServletInfo() {
-        return "Handles patient login functionality";
-    }
-
 }
+

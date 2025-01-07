@@ -16,7 +16,7 @@
     }
 
     String patientName = (String) session.getAttribute("patientName");
-    int patientID = (int) session.getAttribute("patientID");
+    int patientID = Integer.parseInt(session.getAttribute("patientID").toString()); // Fixed type mismatch
 %>
 <!DOCTYPE html>
 <html>
@@ -61,9 +61,16 @@
         %>
     </table>
 
-    <h2>Your Information</h2>
-    <form action="EditPatientInfoServlet" method="GET">
+        <h2>Your Information</h2>
+    <!-- Button to navigate to Edit Patient Info -->
+    <form action="EditPatientInfoServlet" method="POST">
         <button type="submit">Edit My Information</button>
     </form>
+
+    <!-- Option to log out 
+    <form action="LogoutServlet" method="POST">
+        <button type="submit">Logout</button>
+    </form>-->
 </body>
 </html>
+

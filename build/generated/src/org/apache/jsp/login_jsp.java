@@ -50,6 +50,16 @@ public final class login_jsp extends org.apache.jasper.runtime.HttpJspBase
       out.write("</head>\n");
       out.write("<body>\n");
       out.write("    <h2>Patient Login</h2>\n");
+      out.write("\n");
+      out.write("    ");
+ 
+        // Invalidate the session to ensure clean login
+        if (session != null) {
+            session.invalidate();
+        }
+    
+      out.write("\n");
+      out.write("\n");
       out.write("    <form action=\"LoginPatientServlet\" method=\"POST\">\n");
       out.write("        <label for=\"email\">Email:</label>\n");
       out.write("        <input type=\"email\" id=\"email\" name=\"email\" required><br><br>\n");
@@ -59,15 +69,16 @@ public final class login_jsp extends org.apache.jasper.runtime.HttpJspBase
       out.write("\n");
       out.write("        <input type=\"submit\" value=\"Login\">\n");
       out.write("    </form>\n");
-      out.write("    <p style=\"color: red;\">\n");
-      out.write("        ");
-      out.write((java.lang.String) org.apache.jasper.runtime.PageContextImpl.evaluateExpression("${errorMessage != null ? errorMessage : \"\"}", java.lang.String.class, (PageContext)_jspx_page_context, null));
       out.write("\n");
-      out.write("    </p>\n");
+      out.write("    <div style=\"color: red; font-weight: bold;\">\n");
+      out.write("        ");
+      out.print( request.getAttribute("errorMessage") != null ? request.getAttribute("errorMessage") : "" );
+      out.write("\n");
+      out.write("    </div>\n");
+      out.write("\n");
+      out.write("    <p>Don't have an account? <a href=\"register.jsp\">Register here</a>.</p>\n");
       out.write("</body>\n");
       out.write("</html>\n");
-      out.write("\n");
-      out.write("\n");
     } catch (Throwable t) {
       if (!(t instanceof SkipPageException)){
         out = _jspx_out;

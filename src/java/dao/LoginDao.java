@@ -19,29 +19,40 @@ import java.sql.SQLException;
 import util.DBConnection;
 
 public class LoginDao {
+    public int authenticatePatient(LoginBean loginBean) {
+        int patientID = -1;
 
-    public String authenticateUser(LoginBean loginBean) {
+        try (Connection conn = DBConnection.createConnection()) {
+            String query = "SELECT Patient_ID FROM Patient WHERE Patient_Email = ? AND Patient_Password = ?";
+            PreparedStatement ps = conn.prepareStatement(query);
+            ps.setString(1, loginBean.getEmail());
+            ps.setString(2, loginBean.getPassword());
 
-        String email = loginBean.getEmail();
-        String password = loginBean.getPassword();
-
-        String query = "SELECT Patient_Email, Patient_Password FROM Patient WHERE Patient_Email = ? AND Patient_Password = ?";
-        try (Connection con = DBConnection.createConnection();
-             PreparedStatement preparedStatement = con.prepareStatement(query)) {
-
-            preparedStatement.setString(1, email);
-            preparedStatement.setString(2, password);
-
-            try (ResultSet resultSet = preparedStatement.executeQuery()) {
-                if (resultSet.next()) {
-                    return "SUCCESS";
-                } else {
-                    return "Invalid email or password.";
-                }
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                patientID = rs.getInt("Patient_ID");
             }
-        } catch (SQLException e) {
+        } catch (Exception e) {
             e.printStackTrace();
-            return "Database error: " + e.getMessage();
         }
+        return patientID; // Returns -1 if authentication fails
+    }
+
+    public String getPatientName(int patientID) {
+        String patientName = null;
+
+        try (Connection conn = DBConnection.createConnection()) {
+            String query = "SELECT Patient_FName FROM Patient WHERE Patient_ID = ?";
+            PreparedStatement ps = conn.prepareStatement(query);
+            ps.setInt(1, patientID);
+
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                patientName = rs.getString("Patient_FName");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return patientName;
     }
 }
