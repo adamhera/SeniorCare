@@ -27,50 +27,36 @@ public class EmployeeRegisterServlet extends HttpServlet {
         String role = request.getParameter("role");
         String status = "Pending"; // Default status for new employees
         String password = request.getParameter("password");
-        
+
+        // Debugging: Print received inputs
+        System.out.println("Received registration data:");
+        System.out.println("Name: " + name);
+        System.out.println("Email: " + email);
+        System.out.println("Gender: " + gender);
+        System.out.println("Role: " + role);
+        System.out.println("Password: " + password);
+
+        // Create RegisterBeanEmployee object
         RegisterBeanEmployee registerBean = new RegisterBeanEmployee(name, email, role, status, gender, password);
 
+        // Call DAO for registration
         RegisterDaoEmployee registerDao = new RegisterDaoEmployee();
         String result = registerDao.registerUser(registerBean);
-        /*try {
-            Class.forName("org.apache.derby.jdbc.ClientDriver");
-            System.out.println("Driver loaded successfully!");
 
-            Connection conn = DriverManager.getConnection("jdbc:derby://localhost:1527/SeniorCareDB", "app", "app");
-            System.out.println("Database connected successfully!");
+        // Debugging: Print DAO result
+        System.out.println("DAO result: " + result);
 
-            String query = "INSERT INTO Employee (Emp_Name, Emp_Email, Emp_Gender, Emp_Role, Status) VALUES (?, ?, ?, ?, ?)";
-            PreparedStatement stmt = conn.prepareStatement(query);
-
-            stmt.setString(1, name);
-            stmt.setString(2, email);
-            stmt.setString(3, gender);
-            stmt.setString(4, role);
-            stmt.setString(5, "Pending");
-
-            int rows = stmt.executeUpdate();
-            System.out.println(rows + " rows inserted.");
-
-            stmt.close();
-            conn.close();
-
-            response.sendRedirect("login.jsp");
-        } catch (Exception e) {
-            e.printStackTrace();
-            response.getWriter().println("Error: " + e.getMessage());
-        }*/
-        
-        
         if (result.equals("success")) {
+            // Successful registration
             RequestDispatcher dispatcher = request.getRequestDispatcher("pendingApproval.jsp");
             dispatcher.forward(request, response);
         } else {
-            request.setAttribute("errorMessage", "Registration failed. Please try again.");
-            RequestDispatcher dispatcher = request.getRequestDispatcher("/employeeRegister.jsp");
-            dispatcher.forward(request, response);
+            // Registration failed
+             request.setAttribute("errorMessage", "Registration failed. Please try again.");
+                RequestDispatcher dispatcher = request.getRequestDispatcher("/employeeRegister.jsp");
+                dispatcher.forward(request, response);
         }
-        // Redirect to a confirmation page or patient list
-        //response.sendRedirect("ListPatientsServlet");
     }
- }
+}
+
 
