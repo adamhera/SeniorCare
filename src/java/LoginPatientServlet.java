@@ -42,12 +42,18 @@ public class LoginPatientServlet extends HttpServlet {
 
         int patientID = loginDao.authenticatePatient(loginBean);
         if (patientID > 0) {
-            // Fetch patient details (e.g., name) from the database
-            String patientName = loginDao.getPatientName(patientID);
+            // Fetch patient details (e.g., first name, last name, email, address)
+            String patientFirstName = loginDao.getPatientFirstName(patientID);
+            String patientLastName = loginDao.getPatientLastName(patientID);
+            String patientEmail = loginDao.getPatientEmail(patientID);
+            String patientAddress = loginDao.getPatientAddress(patientID);
 
             HttpSession session = request.getSession();
             session.setAttribute("patientID", patientID);
-            session.setAttribute("patientName", patientName);
+            session.setAttribute("patientFirstName", patientFirstName);
+            session.setAttribute("patientLastName", patientLastName);
+            session.setAttribute("patientEmail", patientEmail);
+            session.setAttribute("patientAddress", patientAddress);
 
             response.sendRedirect("patientDasboard.jsp");
         } else {
@@ -69,4 +75,5 @@ public class LoginPatientServlet extends HttpServlet {
         processRequest(request, response);
     }
 }
+
 

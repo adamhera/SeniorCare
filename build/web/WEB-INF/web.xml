@@ -30,5 +30,14 @@
         <servlet-name>EmployeeLoginServlet</servlet-name>
         <url-pattern>/EmployeeLoginServlet</url-pattern>
     </servlet-mapping>
+    
+    <servlet>
+    <servlet-name>EditPatientInfoServlet</servlet-name>
+    <servlet-class>EditPatientInfoServlet</servlet-class>
+</servlet>
+<servlet-mapping>
+    <servlet-name>EditPatientInfoServlet</servlet-name>
+    <url-pattern>/EditPatientInfoServlet</url-pattern>
+</servlet-mapping>
 
 </web-app>

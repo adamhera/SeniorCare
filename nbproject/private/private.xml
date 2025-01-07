@@ -3,27 +3,9 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/adamh/Documents/NetbeansProject/SeniorCare/web/adminDashboard.jsp</file>
-            <file>file:/C:/Users/adamh/Documents/NetbeansProject/SeniorCare/web/nurseLogin.jsp</file>
-            <file>file:/C:/Users/adamh/Documents/NetbeansProject/SeniorCare/web/employeeLogin.jsp</file>
-            <file>file:/C:/Users/adamh/Documents/NetbeansProject/SeniorCare/src/java/BookingServlet.java</file>
             <file>file:/C:/Users/adamh/Documents/NetbeansProject/SeniorCare/web/patientDasboard.jsp</file>
-            <file>file:/C:/Users/adamh/Documents/NetbeansProject/SeniorCare/src/java/bean/LoginBeanEmployee.java</file>
-            <file>file:/C:/Users/adamh/Documents/NetbeansProject/SeniorCare/src/java/EmployeeRegisterServlet.java</file>
             <file>file:/C:/Users/adamh/Documents/NetbeansProject/SeniorCare/src/java/EditPatientInfoServlet.java</file>
-            <file>file:/C:/Users/adamh/Documents/NetbeansProject/SeniorCare/src/java/ListPatientServlet.java</file>
-            <file>file:/C:/Users/adamh/Documents/NetbeansProject/SeniorCare/src/java/ApproveRejectServlet.java</file>
             <file>file:/C:/Users/adamh/Documents/NetbeansProject/SeniorCare/web/editPatientinfo.jsp</file>
-            <file>file:/C:/Users/adamh/Documents/NetbeansProject/SeniorCare/src/java/util/DBConnection.java</file>
-            <file>file:/C:/Users/adamh/Documents/NetbeansProject/SeniorCare/src/java/NurseLoginServlet.java</file>
-            <file>file:/C:/Users/adamh/Documents/NetbeansProject/SeniorCare/web/login.jsp</file>
-            <file>file:/C:/Users/adamh/Documents/NetbeansProject/SeniorCare/src/java/dao/LoginDaoEmployee.java</file>
-            <file>file:/C:/Users/adamh/Documents/NetbeansProject/SeniorCare/src/java/EmployeeLoginServlet.java</file>
-            <file>file:/C:/Users/adamh/Documents/NetbeansProject/SeniorCare/src/java/LogoutServlet.java</file>
-            <file>file:/C:/Users/adamh/Documents/NetbeansProject/SeniorCare/src/java/AdminLoginServlet.java</file>
-            <file>file:/C:/Users/adamh/Documents/NetbeansProject/SeniorCare/src/java/PendingApprovalsServlet.java</file>
-            <file>file:/C:/Users/adamh/Documents/NetbeansProject/SeniorCare/web/nurseDashboard.jsp</file>
-            <file>file:/C:/Users/adamh/Documents/NetbeansProject/SeniorCare/src/java/LoginPatientServlet.java</file>
         </group>
     </open-files>
 </project-private>

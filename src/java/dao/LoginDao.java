@@ -19,6 +19,7 @@ import java.sql.SQLException;
 import util.DBConnection;
 
 public class LoginDao {
+
     public int authenticatePatient(LoginBean loginBean) {
         int patientID = -1;
 
@@ -38,8 +39,8 @@ public class LoginDao {
         return patientID; // Returns -1 if authentication fails
     }
 
-    public String getPatientName(int patientID) {
-        String patientName = null;
+    public String getPatientFirstName(int patientID) {
+        String firstName = null;
 
         try (Connection conn = DBConnection.createConnection()) {
             String query = "SELECT Patient_FName FROM Patient WHERE Patient_ID = ?";
@@ -48,11 +49,70 @@ public class LoginDao {
 
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
-                patientName = rs.getString("Patient_FName");
+                firstName = rs.getString("Patient_FName");
             }
-        } catch (Exception e) {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
-        return patientName;
+
+        return firstName;
     }
+
+    public String getPatientLastName(int patientID) {
+        String lastName = null;
+
+        try (Connection conn = DBConnection.createConnection()) {
+            String query = "SELECT Patient_LName FROM Patient WHERE Patient_ID = ?";
+            PreparedStatement ps = conn.prepareStatement(query);
+            ps.setInt(1, patientID);
+
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                lastName = rs.getString("Patient_LName");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return lastName;
+    }
+
+    public String getPatientEmail(int patientID) {
+        String email = null;
+
+        try (Connection conn = DBConnection.createConnection()) {
+            String query = "SELECT Patient_Email FROM Patient WHERE Patient_ID = ?";
+            PreparedStatement ps = conn.prepareStatement(query);
+            ps.setInt(1, patientID);
+
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                email = rs.getString("Patient_Email");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return email;
+    }
+
+    public String getPatientAddress(int patientID) {
+        String address = null;
+
+        try (Connection conn = DBConnection.createConnection()) {
+            String query = "SELECT Patient_Address FROM Patient WHERE Patient_ID = ?";
+            PreparedStatement ps = conn.prepareStatement(query);
+            ps.setInt(1, patientID);
+
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                address = rs.getString("Patient_Address");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return address;
+    }
+
 }

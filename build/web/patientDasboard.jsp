@@ -15,7 +15,7 @@
         return;
     }
 
-    String patientName = (String) session.getAttribute("patientName");
+    String patientFirstName = (String) session.getAttribute("patientFirstName");
     int patientID = Integer.parseInt(session.getAttribute("patientID").toString()); // Fixed type mismatch
 %>
 <!DOCTYPE html>
@@ -24,7 +24,7 @@
     <title>Patient Dashboard</title>
 </head>
 <body>
-    <h1>Welcome to Senior Care Connect, <%= patientName %>!</h1>
+    <h1>Welcome to Senior Care Connect, <%= patientFirstName %>!</h1>
 
     <h2>Available Packages</h2>
     <table border="1">
@@ -63,7 +63,7 @@
 
         <h2>Your Information</h2>
     <!-- Button to navigate to Edit Patient Info -->
-    <form action="EditPatientInfoServlet" method="POST">
+    <form action="EditPatientInfoServlet" method="GET">
         <button type="submit">Edit My Information</button>
     </form>
 
