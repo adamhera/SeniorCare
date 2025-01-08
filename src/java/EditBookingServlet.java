@@ -29,7 +29,7 @@ public class EditBookingServlet extends HttpServlet {
         int bookingID = Integer.parseInt(request.getParameter("bookingID"));
         
         try (Connection conn = DriverManager.getConnection("jdbc:derby://localhost:1527/SeniorCareDB", "app", "app")) {
-            String query = "SELECT B.Booking_ID, B.Booking_Date, B.Booking_Time, B.Amount_To_Pay, B.Package_ID " +
+            String query = "SELECT B.Booking_ID, B.Booking_Date, B.Booking_Time, B.Package_ID " +
                "FROM Booking B WHERE B.Booking_ID = ?";
 
             PreparedStatement stmt = conn.prepareStatement(query);
@@ -40,7 +40,7 @@ public class EditBookingServlet extends HttpServlet {
                 request.setAttribute("bookingID", rs.getInt("Booking_ID"));
                 request.setAttribute("bookingDate", rs.getDate("Booking_Date"));
                 request.setAttribute("bookingTime", rs.getTime("Booking_Time"));
-                request.setAttribute("amountToPay", rs.getDouble("Amount_To_Pay"));
+                
                 request.setAttribute("packageID", rs.getInt("Package_ID"));
             }
             
@@ -60,19 +60,19 @@ public class EditBookingServlet extends HttpServlet {
         int bookingID = Integer.parseInt(request.getParameter("bookingID"));
         String bookingDate = request.getParameter("bookingDate");
         String bookingTime = request.getParameter("bookingTime");
-        double amountToPay = Double.parseDouble(request.getParameter("amountToPay"));
+        
         int packageID = Integer.parseInt(request.getParameter("packageID"));
         
         try (Connection conn = DriverManager.getConnection("jdbc:derby://localhost:1527/SeniorCareDB", "app", "app")) {
-            String query = "UPDATE Booking SET Booking_Date = ?, Booking_Time = ?, Amount_To_Pay = ?, Package_ID = ? " +
+            String query = "UPDATE Booking SET Booking_Date = ?, Booking_Time = ?,  Package_ID = ? " +
                "WHERE Booking_ID = ?";
 
             PreparedStatement stmt = conn.prepareStatement(query);
             stmt.setString(1, bookingDate);
             stmt.setString(2, bookingTime);
-            stmt.setDouble(3, amountToPay);
-            stmt.setInt(4, packageID);
-            stmt.setInt(5, bookingID);
+
+            stmt.setInt(3, packageID);
+            stmt.setInt(4, bookingID);
             
             int rowsUpdated = stmt.executeUpdate();
             if (rowsUpdated > 0) {
@@ -87,7 +87,7 @@ public class EditBookingServlet extends HttpServlet {
             request.setAttribute("errorMessage", "An error occurred while updating booking.");
         }
         
-        RequestDispatcher dispatcher = request.getRequestDispatcher("patientDashboard.jsp");
+        RequestDispatcher dispatcher = request.getRequestDispatcher("patientDasboard.jsp");
         dispatcher.forward(request, response);
     }
 }

@@ -51,6 +51,6 @@ public class BookingServlet extends HttpServlet {
             request.setAttribute("message", "An error occurred: " + e.getMessage());
         }
 
-        request.getRequestDispatcher("patientDashboard.jsp").forward(request, response);
+        request.getRequestDispatcher("patientDasboard.jsp").forward(request, response);
     }
 }

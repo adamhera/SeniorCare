@@ -43,6 +43,6 @@ public class CancelBookingServlet extends HttpServlet {
             request.setAttribute("errorMessage", "An error occurred while canceling booking.");
         }
         
-        response.sendRedirect("patientDashboard.jsp");
+        response.sendRedirect("patientDasboard.jsp");
     }
 }
