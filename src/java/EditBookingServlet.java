@@ -29,8 +29,9 @@ public class EditBookingServlet extends HttpServlet {
         int bookingID = Integer.parseInt(request.getParameter("bookingID"));
         
         try (Connection conn = DriverManager.getConnection("jdbc:derby://localhost:1527/SeniorCareDB", "app", "app")) {
-            String query = "SELECT B.Booking_ID, B.Booking_Date, B.Booking_Time, B.Package_ID " +
-               "FROM Booking B WHERE B.Booking_ID = ?";
+            String query = "SELECT B.Booking_ID, B.Booking_Date, B.Booking_Time, P.Package_Name " +
+                       "FROM Booking B INNER JOIN Package P ON B.Package_ID = P.Package_ID " +
+                       "WHERE B.Booking_ID = ?";
 
             PreparedStatement stmt = conn.prepareStatement(query);
             stmt.setInt(1, bookingID);
@@ -41,7 +42,7 @@ public class EditBookingServlet extends HttpServlet {
                 request.setAttribute("bookingDate", rs.getDate("Booking_Date"));
                 request.setAttribute("bookingTime", rs.getTime("Booking_Time"));
                 
-                request.setAttribute("packageID", rs.getInt("Package_ID"));
+                request.setAttribute("packageName", rs.getString("Package_Name"));
             }
             
             rs.close();
@@ -56,38 +57,53 @@ public class EditBookingServlet extends HttpServlet {
     }
     
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        int bookingID = Integer.parseInt(request.getParameter("bookingID"));
-        String bookingDate = request.getParameter("bookingDate");
-        String bookingTime = request.getParameter("bookingTime");
-        
-        int packageID = Integer.parseInt(request.getParameter("packageID"));
-        
-        try (Connection conn = DriverManager.getConnection("jdbc:derby://localhost:1527/SeniorCareDB", "app", "app")) {
-            String query = "UPDATE Booking SET Booking_Date = ?, Booking_Time = ?,  Package_ID = ? " +
-               "WHERE Booking_ID = ?";
+        throws ServletException, IOException {
+    int bookingID = Integer.parseInt(request.getParameter("bookingID"));
+    String bookingDate = request.getParameter("bookingDate");
+    String bookingTime = request.getParameter("bookingTime");
+    String packageName = request.getParameter("packageName");
 
-            PreparedStatement stmt = conn.prepareStatement(query);
-            stmt.setString(1, bookingDate);
-            stmt.setString(2, bookingTime);
-
-            stmt.setInt(3, packageID);
-            stmt.setInt(4, bookingID);
-            
-            int rowsUpdated = stmt.executeUpdate();
-            if (rowsUpdated > 0) {
-                request.setAttribute("successMessage", "Booking updated successfully.");
-            } else {
-                request.setAttribute("errorMessage", "Failed to update booking.");
-            }
-            
-            stmt.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-            request.setAttribute("errorMessage", "An error occurred while updating booking.");
-        }
-        
-        RequestDispatcher dispatcher = request.getRequestDispatcher("patientDasboard.jsp");
-        dispatcher.forward(request, response);
+    int packageID = 0; // Map package name to ID
+    switch (packageName) {
+        case "Basic Package":
+            packageID = 1;
+            break;
+        case "Package A":
+            packageID = 2;
+            break;
+        case "Package B":
+            packageID = 3;
+            break;
+        case "Package C":
+            packageID = 4;
+            break;
     }
+
+    try (Connection conn = DriverManager.getConnection("jdbc:derby://localhost:1527/SeniorCareDB", "app", "app")) {
+        String query = "UPDATE Booking SET Booking_Date = ?, Booking_Time = ?, Package_ID = ? " +
+                       "WHERE Booking_ID = ?";
+
+        PreparedStatement stmt = conn.prepareStatement(query);
+        stmt.setString(1, bookingDate);
+        stmt.setString(2, bookingTime);
+        stmt.setInt(3, packageID);
+        stmt.setInt(4, bookingID);
+
+        int rowsUpdated = stmt.executeUpdate();
+        if (rowsUpdated > 0) {
+            request.setAttribute("successMessage", "Booking updated successfully.");
+        } else {
+            request.setAttribute("errorMessage", "Failed to update booking.");
+        }
+
+        stmt.close();
+    } catch (Exception e) {
+        e.printStackTrace();
+        request.setAttribute("errorMessage", "An error occurred while updating booking.");
+    }
+
+    RequestDispatcher dispatcher = request.getRequestDispatcher("patientDasboard.jsp");
+    dispatcher.forward(request, response);
+}
+
 }
