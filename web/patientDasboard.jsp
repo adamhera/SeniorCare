@@ -16,7 +16,7 @@
     }
 
     String patientFirstName = (String) session.getAttribute("patientFirstName");
-    int patientID = Integer.parseInt(session.getAttribute("patientID").toString()); // Fixed type mismatch
+    int patientID = Integer.parseInt(session.getAttribute("patientID").toString());
 %>
 <!DOCTYPE html>
 <html>
@@ -27,50 +27,105 @@
     <h1>Welcome to Senior Care Connect, <%= patientFirstName %>!</h1>
 
     <h2>Available Packages</h2>
+<table border="1">
+    <tr>
+        <th>Package Name</th>
+        <th>Description</th>
+        <th>Price</th>
+        <th>Action</th>
+    </tr>
+    <%
+        Connection conn = DriverManager.getConnection("jdbc:derby://localhost:1527/SeniorCareDB", "app", "app");
+        String queryPackages = "SELECT Package_ID, Package_Name, Package_Description, Package_Price FROM Package";
+        PreparedStatement stmt = conn.prepareStatement(queryPackages);
+        ResultSet rs = stmt.executeQuery();
+
+        while (rs.next()) {
+    %>
+    <tr>
+        <td><%= rs.getString("Package_Name") %></td>
+        <td><%= rs.getString("Package_Description") %></td>
+        <td><%= rs.getDouble("Package_Price") %></td>
+        <td>
+            <form action="BookingServlet" method="POST">
+                <input type="hidden" name="packageID" value="<%= rs.getInt("Package_ID") %>">
+                
+                <!-- Add inputs for date and time -->
+                <label for="bookingDate">Date:</label>
+                <input type="date" name="bookingDate" required>
+                
+                <label for="bookingTime">Time:</label>
+                <input type="time" name="bookingTime" required>
+                
+                <button type="submit">Book</button>
+            </form>
+        </td>
+    </tr>
+    <% 
+        }
+        rs.close();
+        stmt.close();
+        conn.close();
+    %>
+</table>
+
+    <h2>Your Bookings</h2>
     <table border="1">
         <tr>
             <th>Package Name</th>
-            <th>Description</th>
-            <th>Price</th>
-            <th>Action</th>
+            <th>Date</th>
+            <th>Time</th>
+            <th>Amount to Pay</th>
+            <th>Actions</th>
         </tr>
         <%
-            Connection conn = DriverManager.getConnection("jdbc:derby://localhost:1527/SeniorCareDB", "app", "app");
-            String queryPackages = "SELECT Package_ID, Package_Name, Package_Description, Package_Price FROM Package";
-            PreparedStatement stmt = conn.prepareStatement(queryPackages);
-            ResultSet rs = stmt.executeQuery();
+            String queryBookings = "SELECT b.Booking_ID, p.Package_Name, b.Booking_Date, b.Booking_Time, b.Amount_To_Pay " +
+                                   "FROM Booking b JOIN Package p ON b.Package_ID = p.Package_ID WHERE b.Patient_ID = ?";
+            PreparedStatement stmtBooking = conn.prepareStatement(queryBookings);
+            stmtBooking.setInt(1, patientID);
+            ResultSet rsBooking = stmtBooking.executeQuery();
 
-            while (rs.next()) {
+            while (rsBooking.next()) {
+                int bookingID = rsBooking.getInt("Booking_ID");
         %>
         <tr>
-            <td><%= rs.getString("Package_Name") %></td>
-            <td><%= rs.getString("Package_Description") %></td>
-            <td><%= rs.getDouble("Package_Price") %></td>
+            <td><%= rsBooking.getString("Package_Name") %></td>
+            <td><%= rsBooking.getDate("Booking_Date") %></td>
+            <td><%= rsBooking.getTime("Booking_Time") %></td>
+            <td><%= rsBooking.getDouble("Amount_To_Pay") %></td>
             <td>
-                <form action="BookingServlet" method="POST">
-                    <input type="hidden" name="packageID" value="<%= rs.getInt("Package_ID") %>">
-                    <button type="submit">Book</button>
+                <!-- Edit Booking Form -->
+                <form action="EditBookingServlet" method="GET" style="display:inline;">
+                    <input type="hidden" name="bookingID" value="<%= bookingID %>">
+                    <button type="submit">Edit</button>
+                </form>
+
+                <!-- Cancel Booking Form -->
+                <form action="CancelBookingServlet" method="POST" style="display:inline;">
+                    <input type="hidden" name="bookingID" value="<%= bookingID %>">
+                    <button type="submit" onclick="return confirm('Are you sure you want to cancel this booking?');">Cancel</button>
                 </form>
             </td>
         </tr>
-        <% 
+        <%
             }
-            rs.close();
-            stmt.close();
+            rsBooking.close();
+            stmtBooking.close();
             conn.close();
         %>
     </table>
 
-        <h2>Your Information</h2>
+    <h2>Your Information</h2>
     <!-- Button to navigate to Edit Patient Info -->
     <form action="EditPatientInfoServlet" method="GET">
         <button type="submit">Edit My Information</button>
     </form>
 
-    <!-- Option to log out 
+    <!-- Option to log out -->
     <form action="LogoutServlet" method="POST">
         <button type="submit">Logout</button>
-    </form>-->
+    </form>
 </body>
 </html>
+
 
