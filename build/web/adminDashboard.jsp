@@ -143,43 +143,45 @@
 
     <hr>
 
-    <!-- Package Management Section -->
-    <h3>Package Management</h3>
-    <table border="1">
-        <tr>
-            <th>Package ID</th>
-            <th>Package Name</th>
-            <th>Description</th>
-            <th>Price</th>
-            <th>Action</th>
-        </tr>
-        <%
-            // Query for packages
-            String queryPackages = "SELECT * FROM Package";
-            PreparedStatement stmtPackages = conn.prepareStatement(queryPackages);
-            ResultSet rsPackages = stmtPackages.executeQuery();
+  <!-- Package Management Section -->
+<h3>Package Management</h3>
+<table border="1">
+    <tr>
+        <th>Package ID</th>
+        <th>Package Name</th>
+        <th>Description</th>
+        <th>Price</th>
+        <th>Action</th>
+    </tr>
+    <%
+        // Query for packages
+        String queryPackages = "SELECT * FROM Package";
+        PreparedStatement stmtPackages = conn.prepareStatement(queryPackages);
+        ResultSet rsPackages = stmtPackages.executeQuery();
 
-            while (rsPackages.next()) {
-        %>
-        <tr>
-            <td><%= rsPackages.getInt("Package_ID") %></td>
-            <td><%= rsPackages.getString("Package_Name") %></td>
-            <td><%= rsPackages.getString("Package_Description") %></td>
-            <td><%= rsPackages.getDouble("Package_Price") %></td>
-            <td>
-                <form action="EditDeletePackageServlet" method="POST">
-                    <input type="hidden" name="packageID" value="<%= rsPackages.getInt("Package_ID") %>">
-                    <button type="submit" name="action" value="Edit">Edit</button>
-                    <button type="submit" name="action" value="Delete">Delete</button>
-                </form>
-            </td>
-        </tr>
-        <% 
-            }
-            rsPackages.close();
-            stmtPackages.close();
-        %>
-    </table>
+        while (rsPackages.next()) {
+    %>
+    <tr>
+        <td><%= rsPackages.getInt("Package_ID") %></td>
+        <td><%= rsPackages.getString("Package_Name") %></td>
+        <td><%= rsPackages.getString("Package_Description") %></td>
+        <td><%= rsPackages.getDouble("Package_Price") %></td>
+        <td>
+            <!-- Edit Button -->
+            <form action="EditPackageServlet" method="GET" style="display: inline;">
+                <input type="hidden" name="packageID" value="<%= rsPackages.getInt("Package_ID") %>">
+                <button type="submit">Edit</button>
+            </form>
+        </td>
+    </tr>
+    <% 
+        }
+        rsPackages.close();
+        stmtPackages.close();
+    %>
+</table>
+
+
 
     <hr>
 
