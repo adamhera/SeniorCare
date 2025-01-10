@@ -168,7 +168,7 @@
         <td><%= rsPackages.getDouble("Package_Price") %></td>
         <td>
             <!-- Edit Button -->
-            <form action="EditPackageServlet" method="GET" style="display: inline;">
+            <form action="EditPackageServlet" method="POST" style="display: inline;">
                 <input type="hidden" name="packageID" value="<%= rsPackages.getInt("Package_ID") %>">
                 <button type="submit">Edit</button>
             </form>
