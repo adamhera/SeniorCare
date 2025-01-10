@@ -169,9 +169,10 @@
         <td>
             <!-- Edit Button -->
             <form action="EditPackageServlet" method="POST" style="display: inline;">
-                <input type="hidden" name="packageID" value="<%= rsPackages.getInt("Package_ID") %>">
-                <button type="submit">Edit</button>
-            </form>
+    <input type="hidden" name="packageID" value="<%= rsPackages.getInt("Package_ID") %>">
+    <input type="hidden" name="action" value="Edit">  <!-- Add this line -->
+    <button type="submit">Edit</button>
+</form>
         </td>
     </tr>
     <% 

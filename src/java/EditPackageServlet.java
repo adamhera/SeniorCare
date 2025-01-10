@@ -94,6 +94,7 @@ public class EditPackageServlet extends HttpServlet {
 
 /* guna dao*/
 import dao.PackageDAO;
+import com.seniorcare.model.Package;
 import java.io.IOException;
 import java.sql.SQLException;
 import javax.servlet.RequestDispatcher;
@@ -156,3 +157,4 @@ public class EditPackageServlet extends HttpServlet {
         }
     }
 }
+

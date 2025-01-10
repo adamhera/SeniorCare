@@ -13,6 +13,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import util.DBConnection;
+import com.seniorcare.model.Package;
+import java.sql.SQLException;
 
 public class PackageDAO {
     public Package getPackageById(int packageId) throws Exception {
@@ -41,19 +43,24 @@ public class PackageDAO {
         return pkg;
     }
 
-    public boolean updatePackage(Package pkg) throws Exception {
-        // Use DBConnection utility to get the connection
-        try (Connection conn = DBConnection.createConnection()) {
-            String query = "UPDATE Package SET Package_Name = ?, Package_Description = ?, Package_Price = ? WHERE Package_ID = ?";
-            PreparedStatement stmt = conn.prepareStatement(query);
+   public boolean updatePackage(Package pkg) {
+    // Use DBConnection utility to get the connection
+    try (Connection conn = DBConnection.createConnection()) {
+        String query = "UPDATE Package SET Package_Name = ?, Package_Description = ?, Package_Price = ? WHERE Package_ID = ?";
+        try (PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setString(1, pkg.getName());
             stmt.setString(2, pkg.getDescription());
             stmt.setDouble(3, pkg.getPrice());
             stmt.setInt(4, pkg.getId());
 
             int rowsUpdated = stmt.executeUpdate();
-            stmt.close();
-            return rowsUpdated > 0;
+            return rowsUpdated > 0;  // If at least one row was updated, return true
         }
+    } catch (SQLException e) {
+        // Log the exception (or print it for debugging)
+        e.printStackTrace();
+        return false;  // Return false if an error occurs
     }
+}
+
 }

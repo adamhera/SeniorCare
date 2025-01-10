@@ -16,24 +16,26 @@
     <h2>Edit Package</h2>
 
     <form action="EditPackageServlet" method="POST">
-        <!-- Hidden field to pass the package ID for editing -->
-        <input type="hidden" name="packageID" value="<%= request.getAttribute("packageID") != null ? request.getAttribute("packageID") : "" %>">
+    <!-- Add the hidden action parameter to indicate Save -->
+    <input type="hidden" name="action" value="Save">
+    
+    <input type="hidden" name="packageID" value="<%= request.getAttribute("packageID") != null ? request.getAttribute("packageID") : "" %>">
+    <label for="packageName">Package Name:</label>
+    <input type="text" name="packageName" value="<%= request.getAttribute("packageName") != null ? request.getAttribute("packageName") : "" %>" required>
+    <br>
 
-        <label for="packageName">Package Name:</label>
-        <input type="text" name="packageName" value="<%= request.getAttribute("packageName") != null ? request.getAttribute("packageName") : "" %>" required>
-        <br>
+    <label for="packageDescription">Package Description:</label>
+    <textarea name="packageDescription" required><%= request.getAttribute("packageDescription") != null ? request.getAttribute("packageDescription") : "" %></textarea>
+    <br>
 
-        <label for="packageDescription">Package Description:</label>
-        <textarea name="packageDescription" required><%= request.getAttribute("packageDescription") != null ? request.getAttribute("packageDescription") : "" %></textarea>
-        <br>
+    <label for="packagePrice">Price:</label>
+    <input type="number" name="packagePrice" step="0.01" value="<%= request.getAttribute("packagePrice") != null ? request.getAttribute("packagePrice") : "" %>" required>
+    <br>
 
-        <label for="packagePrice">Price:</label>
-        <input type="number" name="packagePrice" step="0.01" value="<%= request.getAttribute("packagePrice") != null ? request.getAttribute("packagePrice") : "" %>" required>
-        <br>
+    <button type="submit">Save Changes</button>
+    <a href="adminDashboard.jsp">Back to Dashboard</a>
+</form>
 
-        <button type="submit">Save Changes</button>
-        <a href="adminDashboard.jsp">Back to Dashboard</a>
-    </form>
 
     <% if (request.getAttribute("errorMessage") != null) { %>
         <p style="color: red;"><%= request.getAttribute("errorMessage") %></p>
