@@ -10,6 +10,7 @@
  *
  * @author adamh
  */
+import dao.BookingDAO;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -20,6 +21,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import util.DBConnection;
 
+/*
 @WebServlet("/BookingServlet")
 public class BookingServlet extends HttpServlet {
 
@@ -49,6 +51,30 @@ public class BookingServlet extends HttpServlet {
         } catch (Exception e) {
             e.printStackTrace();
             request.setAttribute("message", "An error occurred: " + e.getMessage());
+        }
+
+        request.getRequestDispatcher("patientDasboard.jsp").forward(request, response);
+    }
+}
+*/
+
+@WebServlet("/BookingServlet")
+public class BookingServlet extends HttpServlet {
+
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        int packageID = Integer.parseInt(request.getParameter("packageID"));
+        int patientID = (int) request.getSession().getAttribute("patientID");
+        String bookingDate = request.getParameter("bookingDate");
+        String bookingTime = request.getParameter("bookingTime");
+
+        BookingDAO bookingDAO = new BookingDAO();
+        boolean isBooked = bookingDAO.createBooking(patientID, packageID, bookingDate, bookingTime);
+
+        if (isBooked) {
+            request.setAttribute("message", "Booking successful!");
+        } else {
+            request.setAttribute("message", "Failed to book the package.");
         }
 
         request.getRequestDispatcher("patientDasboard.jsp").forward(request, response);
