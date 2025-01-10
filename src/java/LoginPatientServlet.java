@@ -35,12 +35,14 @@ public class LoginPatientServlet extends HttpServlet {
         String password = request.getParameter("password");
 
         LoginBean loginBean = new LoginBean();
+        
         loginBean.setEmail(email);
         loginBean.setPassword(password);
 
         LoginDao loginDao = new LoginDao();
 
         int patientID = loginDao.authenticatePatient(loginBean);
+        
         if (patientID > 0) {
             // Fetch patient details (e.g., first name, last name, email, address)
             String patientFirstName = loginDao.getPatientFirstName(patientID);

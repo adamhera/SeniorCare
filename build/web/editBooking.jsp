@@ -5,6 +5,7 @@
 --%>
 
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -21,12 +22,16 @@
         <label for="bookingTime">Time:</label>
         <input type="time" name="bookingTime" value="<%= request.getAttribute("bookingTime") %>" required><br>
 
-        
-
-        <label for="packageID">Package ID:</label>
-        <input type="number" name="packageID" value="<%= request.getAttribute("packageID") %>" required><br>
+        <label for="packageName">Package:</label>
+        <select name="packageName" required>
+            <option value="Basic Package" <%= "Basic Package".equals(request.getAttribute("packageName")) ? "selected" : "" %>>Basic Package</option>
+            <option value="Package A" <%= "Package A".equals(request.getAttribute("packageName")) ? "selected" : "" %>>Package A</option>
+            <option value="Package B" <%= "Package B".equals(request.getAttribute("packageName")) ? "selected" : "" %>>Package B</option>
+            <option value="Package C" <%= "Package C".equals(request.getAttribute("packageName")) ? "selected" : "" %>>Package C</option>
+        </select><br>
 
         <button type="submit">Save Changes</button>
     </form>
 </body>
 </html>
+

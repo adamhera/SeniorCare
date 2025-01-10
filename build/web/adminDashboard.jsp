@@ -76,7 +76,6 @@
                        "JOIN Booking b ON p.Patient_ID = b.Patient_ID " +
                        "JOIN Package pk ON b.Package_ID = pk.Package_ID";
 
-
             PreparedStatement stmtPatients = conn.prepareStatement(queryPatients);
             ResultSet rsPatients = stmtPatients.executeQuery();
 
@@ -92,8 +91,132 @@
             }
             rsPatients.close();
             stmtPatients.close();
-            conn.close();
         %>
     </table>
+
+    <hr>
+
+    <!-- Booking Management Section -->
+    <h3>Booking Management</h3>
+    <table border="1">
+        <tr>
+            <th>Booking ID</th>
+            <th>Patient Name</th>
+            <th>Package Name</th>
+            <th>Booking Date</th>
+            <th>Booking Time</th>
+            <th>Action</th>
+        </tr>
+        <%
+            // Query for all bookings
+            String queryBookings = "SELECT b.Booking_ID, p.Patient_FName || ' ' || p.Patient_LName AS PatientName, " +
+                                   "pk.Package_Name, b.Booking_Date, b.Booking_Time " +
+                                   "FROM Booking b " +
+                                   "JOIN Patient p ON b.Patient_ID = p.Patient_ID " +
+                                   "JOIN Package pk ON b.Package_ID = pk.Package_ID";
+
+            PreparedStatement stmtBookings = conn.prepareStatement(queryBookings);
+            ResultSet rsBookings = stmtBookings.executeQuery();
+
+            while (rsBookings.next()) {
+        %>
+        <tr>
+            <td><%= rsBookings.getInt("Booking_ID") %></td>
+            <td><%= rsBookings.getString("PatientName") %></td>
+            <td><%= rsBookings.getString("Package_Name") %></td>
+            <td><%= rsBookings.getDate("Booking_Date") %></td>
+            <td><%= rsBookings.getTime("Booking_Time") %></td>
+            <td>
+                <form action="CancelRescheduleServlet" method="POST">
+                    <input type="hidden" name="bookingID" value="<%= rsBookings.getInt("Booking_ID") %>">
+                    <button type="submit" name="action" value="Cancel">Cancel</button>
+                    <button type="submit" name="action" value="Reschedule">Reschedule</button>
+                </form>
+            </td>
+        </tr>
+        <% 
+            }
+            rsBookings.close();
+            stmtBookings.close();
+        %>
+    </table>
+
+    <hr>
+
+  <!-- Package Management Section -->
+<h3>Package Management</h3>
+<table border="1">
+    <tr>
+        <th>Package ID</th>
+        <th>Package Name</th>
+        <th>Description</th>
+        <th>Price</th>
+        <th>Action</th>
+    </tr>
+    <%
+        // Query for packages
+        String queryPackages = "SELECT * FROM Package";
+        PreparedStatement stmtPackages = conn.prepareStatement(queryPackages);
+        ResultSet rsPackages = stmtPackages.executeQuery();
+
+        while (rsPackages.next()) {
+    %>
+    <tr>
+        <td><%= rsPackages.getInt("Package_ID") %></td>
+        <td><%= rsPackages.getString("Package_Name") %></td>
+        <td><%= rsPackages.getString("Package_Description") %></td>
+        <td><%= rsPackages.getDouble("Package_Price") %></td>
+        <td>
+            <!-- Edit Button -->
+            <form action="EditPackageServlet" method="GET" style="display: inline;">
+                <input type="hidden" name="packageID" value="<%= rsPackages.getInt("Package_ID") %>">
+                <button type="submit">Edit</button>
+            </form>
+        </td>
+    </tr>
+    <% 
+        }
+        rsPackages.close();
+        stmtPackages.close();
+    %>
+</table>
+
+
+
+    <hr>
+
+    <!-- Reports and Statistics -->
+    <h3>Reports and Statistics</h3>
+    <%
+        // Query for total bookings and revenue
+        String queryStats = "SELECT COUNT(*) AS TotalBookings, SUM(pk.Package_Price) AS TotalRevenue " +
+                            "FROM Booking b " +
+                            "JOIN Package pk ON b.Package_ID = pk.Package_ID";
+
+        PreparedStatement stmtStats = conn.prepareStatement(queryStats);
+        ResultSet rsStats = stmtStats.executeQuery();
+
+        if (rsStats.next()) {
+    %>
+    <p>Total Bookings: <%= rsStats.getInt("TotalBookings") %></p>
+    <p>Total Revenue: $<%= rsStats.getDouble("TotalRevenue") %></p>
+    <% 
+        }
+        rsStats.close();
+        stmtStats.close();
+        conn.close();
+    %>
+
+    <hr>
+
+    <!-- Admin Profile Settings -->
+    <h3>Admin Profile Settings</h3>
+    <form action="UpdateAdminProfileServlet" method="POST">
+        <label for="username">Username:</label>
+        <input type="text" id="username" name="username" required><br>
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" required><br>
+        <button type="submit">Update Profile</button>
+    </form>
 </body>
 </html>
