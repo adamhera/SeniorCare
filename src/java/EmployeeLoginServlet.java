@@ -30,11 +30,13 @@ public class EmployeeLoginServlet extends HttpServlet {
         String role = request.getParameter("role"); // Get the role from the form
 
         LoginBeanEmployee loginBean = new LoginBeanEmployee();
+        
         loginBean.setEmail(email);
         loginBean.setPassword(password);
         loginBean.setRole(role);
 
         LoginDaoEmployee loginDao = new LoginDaoEmployee();
+        
         String nurseName = loginDao.authenticateAndFetchName(loginBean); // Fetch nurse name if authentication is successful
 
         if (nurseName != null) {
