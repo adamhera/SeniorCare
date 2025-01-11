@@ -4,7 +4,6 @@
     Author     : adamh
 --%>
 
-<%@ page session="true" %>
 <%@ page import="java.sql.ResultSet"%>
 <%@ page import="java.sql.PreparedStatement"%>
 <%@ page import="java.sql.DriverManager"%>
@@ -135,9 +134,11 @@
             <td><%= rsPackages.getDouble("Package_Price") %></td>
             <td>
                 <form action="EditPackageServlet" method="POST">
-                    <input type="hidden" name="packageID" value="<%= rsPackages.getInt("Package_ID") %>">
-                    <button type="submit">Edit</button>
-                </form>
+    <!-- Action parameter to specify "Edit" -->
+    <input type="hidden" name="action" value="Edit">
+    <input type="hidden" name="packageID" value="<%= rsPackages.getInt("Package_ID") %>">
+    <button type="submit">Edit</button>
+</form>
             </td>
         </tr>
         <% 

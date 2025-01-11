@@ -125,7 +125,7 @@ public class EditPackageServlet extends HttpServlet {
                     request.setAttribute("packagePrice", pkg.getPrice());
                 }
 
-                // Forward to JSP
+                // Forward to JSP to display the package details for editing
                 RequestDispatcher dispatcher = request.getRequestDispatcher("editPackage.jsp");
                 dispatcher.forward(request, response);
 
@@ -157,4 +157,5 @@ public class EditPackageServlet extends HttpServlet {
         }
     }
 }
+
 
