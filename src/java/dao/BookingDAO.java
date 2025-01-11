@@ -54,5 +54,32 @@ public class BookingDAO {
             return false;  // Return false if there's an exception
         }
     }
+        
+        public boolean updateBookingStatus(int bookingId, String status) {
+        String query = "UPDATE BOOKING SET STATUS = ? WHERE BOOKING_ID = ?";
+        try (Connection conn = DBConnection.createConnection();
+             PreparedStatement ps = conn.prepareStatement(query)) {
+            ps.setString(1, status);
+            ps.setInt(2, bookingId);
+            int rowsUpdated = ps.executeUpdate();
+            return rowsUpdated > 0; // Return true if the update was successful
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public boolean approveBooking(int bookingId) {
+        String query = "UPDATE BOOKING SET STATUS = 'Approved' WHERE BOOKING_ID = ?";
+        try (Connection conn = DBConnection.createConnection();
+             PreparedStatement ps = conn.prepareStatement(query)) {
+            ps.setInt(1, bookingId);
+            int rowsUpdated = ps.executeUpdate();
+            return rowsUpdated > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
 }
 

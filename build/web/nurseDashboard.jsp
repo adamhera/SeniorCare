@@ -9,12 +9,14 @@
 <%@page import="java.sql.DriverManager"%>
 <%@page import="java.sql.Connection"%>
 <%@ page session="true" %>
+<%@ page session="true" %>
 <%
-    if (session.getAttribute("nurseID") == null) {
+    if (session.getAttribute("employeeID") == null) {
         response.sendRedirect("employeeLogin.jsp");
         return;
     }
 %>
+
 <!DOCTYPE html>
 <html>
 <head>

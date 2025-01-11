@@ -4,6 +4,7 @@
  * and open the template in the editor.
  */
 
+import dao.BookingDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Connection;
@@ -24,29 +25,19 @@ import javax.servlet.http.HttpServletResponse;
  */
 @WebServlet("/UpdateBookingStatusServlet")
 public class UpdateBookingStatusServlet extends HttpServlet {
-
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        int bookingID = Integer.parseInt(request.getParameter("bookingID"));
-        String action = request.getParameter("action");
+        int bookingId = Integer.parseInt(request.getParameter("bookingID"));
+        String action = request.getParameter("action"); // Accept or Reject
 
-        try (Connection conn = DriverManager.getConnection("jdbc:derby://localhost:1527/SeniorCareDB", "app", "app")) {
-            String updateQuery = "UPDATE Booking SET Status = ?, Nurse_ID = ? WHERE Booking_ID = ?";
-            try (PreparedStatement stmt = conn.prepareStatement(updateQuery)) {
-                stmt.setString(1, action);
-                stmt.setInt(2, (Integer) request.getSession().getAttribute("nurseID")); // Set nurse ID
-                stmt.setInt(3, bookingID);
+        BookingDAO bookingDao = new BookingDAO();
+        boolean isUpdated = bookingDao.updateBookingStatus(bookingId, action);
 
-                int rowsUpdated = stmt.executeUpdate();
-                if (rowsUpdated > 0) {
-                    response.sendRedirect("nurseDashboard.jsp"); // Redirect back to the nurse dashboard
-                } else {
-                    response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Failed to update booking status.");
-                }
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Error updating booking status.");
+        if (isUpdated) {
+            response.sendRedirect("nurseDashboard.jsp"); // Refresh nurse dashboard
+        } else {
+            request.setAttribute("errorMessage", "Failed to update booking status.");
+            request.getRequestDispatcher("nurseDashboard.jsp").forward(request, response);
         }
     }
 }
