@@ -4,17 +4,29 @@
     Author     : adamh
 --%>
 
-<%@page import="java.sql.ResultSet"%>
-<%@page import="java.sql.PreparedStatement"%>
-<%@page import="java.sql.DriverManager"%>
-<%@page import="java.sql.Connection"%>
-<%@ page session="true" %>
-<%@ page session="true" %>
+<%@page import="com.seniorcare.model.NurseInfo"%>
+<%@page import="java.util.List"%>
+<%@page import="com.seniorcare.model.Booking"%>
+<%@page import="dao.BookingDAO"%>
+<%@page import="dao.NurseInfoDao"%> <!-- Import the NurseInfoDao -->
+<%@page session="true" %>
+
 <%
     if (session.getAttribute("employeeID") == null) {
         response.sendRedirect("employeeLogin.jsp");
         return;
     }
+
+    // Fetch pending bookings using the DAO
+    BookingDAO bookingDao = new BookingDAO();
+    List<Booking> bookings = bookingDao.getPendingBookings();
+
+    // Get the emp_id from session to fetch nurse details
+    Integer empId = (Integer) session.getAttribute("employeeId"); // Assuming empId is stored in session
+
+    // Fetch nurse information from the database using the empId
+    NurseInfoDao nurseInfoDao = new NurseInfoDao();
+    NurseInfo nurseInfo = nurseInfoDao.getNurseInfoById(empId);
 %>
 
 <!DOCTYPE html>
@@ -26,7 +38,17 @@
     <h2>Welcome, <%= session.getAttribute("employeeName") %>!</h2>
     <a href="LogoutServlet">Logout</a>
 
-    <h3>List of Bookings</h3>
+    <!-- Nurse Details Section -->
+    <h3>Your Information</h3>
+    <p><strong>Certification:</strong> <%= nurseInfo.getNurseCertification() %></p>
+    <p><strong>Shift:</strong> <%= nurseInfo.getNurseShift() %></p>
+
+    <form action="UpdateNurseInfoServlet" method="POST">
+        <button type="submit">Edit My Information</button>
+    </form>
+
+    <!-- Pending Bookings Section -->
+    <h3>List of Pending Bookings</h3>
     <table border="1">
         <tr>
             <th>Booking ID</th>
@@ -36,30 +58,18 @@
             <th>Booking Time</th>
             <th>Action</th>
         </tr>
-        <%
-            Connection conn = DriverManager.getConnection("jdbc:derby://localhost:1527/SeniorCareDB", "app", "app");
-
-            String queryBookings = "SELECT b.Booking_ID, p.Patient_FName || ' ' || p.Patient_LName AS PatientName, " +
-                                   "pk.Package_Name, b.Booking_Date, b.Booking_Time " +
-                                   "FROM Booking b " +
-                                   "JOIN Patient p ON b.Patient_ID = p.Patient_ID " +
-                                   "JOIN Package pk ON b.Package_ID = pk.Package_ID " +
-                                   "WHERE b.Status = 'Pending'"; // Show only pending bookings
-
-            PreparedStatement stmtBookings = conn.prepareStatement(queryBookings);
-            ResultSet rsBookings = stmtBookings.executeQuery();
-
-            while (rsBookings.next()) {
+        <% 
+            for (Booking booking : bookings) {
         %>
         <tr>
-            <td><%= rsBookings.getInt("Booking_ID") %></td>
-            <td><%= rsBookings.getString("PatientName") %></td>
-            <td><%= rsBookings.getString("Package_Name") %></td>
-            <td><%= rsBookings.getDate("Booking_Date") %></td>
-            <td><%= rsBookings.getTime("Booking_Time") %></td>
+            <td><%= booking.getBookingId() %></td>
+            <td><%= booking.getPatientName() %></td>
+            <td><%= booking.getPackageName() %></td>
+            <td><%= booking.getBookingDate() %></td>
+            <td><%= booking.getBookingTime() %></td>
             <td>
                 <form action="UpdateBookingStatusServlet" method="POST">
-                    <input type="hidden" name="bookingID" value="<%= rsBookings.getInt("Booking_ID") %>">
+                    <input type="hidden" name="bookingID" value="<%= booking.getBookingId() %>">
                     <button type="submit" name="action" value="Accept">Accept</button>
                     <button type="submit" name="action" value="Reject">Reject</button>
                 </form>
@@ -67,9 +77,11 @@
         </tr>
         <% 
             }
-            rsBookings.close();
-            stmtBookings.close();
         %>
     </table>
+
+    <form action="LogoutServlet" method="POST">
+        <button type="submit">Logout</button>
+    </form>
 </body>
 </html>

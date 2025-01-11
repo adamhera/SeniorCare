@@ -11,7 +11,8 @@ public class LoginBeanEmployee implements Serializable {
     private String email;  // Renamed from 'username' to 'email' for clarity
     private String password;
     private String role;   // This stores the user's role (e.g., Admin, Nurse)
-
+    private int employeeId;
+    
     public LoginBeanEmployee() {
     }
 
@@ -48,5 +49,14 @@ public class LoginBeanEmployee implements Serializable {
 
     public void setRole(String role) {
         this.role = role;
+    }
+
+     // Getter and Setter for employeeId (nurseId)
+    public int getEmployeeId() {
+        return employeeId;
+    }
+
+    public void setEmployeeId(int employeeId) {
+        this.employeeId = employeeId;
     }
 }

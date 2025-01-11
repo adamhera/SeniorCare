@@ -4,6 +4,7 @@
  * and open the template in the editor.
  */
 
+import dao.BookingDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Connection;
@@ -24,25 +25,18 @@ import javax.servlet.http.HttpServletResponse;
  */
 @WebServlet("/ApproveBookingServlet")
 public class ApproveBookingServlet extends HttpServlet {
-
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        int bookingID = Integer.parseInt(request.getParameter("bookingID"));
+        int bookingId = Integer.parseInt(request.getParameter("bookingID"));
 
-        try (Connection conn = DriverManager.getConnection("jdbc:derby://localhost:1527/SeniorCareDB", "app", "app")) {
-            String updateQuery = "UPDATE Booking SET Status = 'Approved' WHERE Booking_ID = ?";
-            try (PreparedStatement stmt = conn.prepareStatement(updateQuery)) {
-                stmt.setInt(1, bookingID);
-                int rowsUpdated = stmt.executeUpdate();
-                if (rowsUpdated > 0) {
-                    response.sendRedirect("adminDashboard.jsp"); // Redirect to the admin dashboard after approval
-                } else {
-                    response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Failed to approve booking.");
-                }
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Error approving booking.");
+        BookingDAO bookingDao = new BookingDAO();
+        boolean isApproved = bookingDao.approveBooking(bookingId);
+
+        if (isApproved) {
+            response.sendRedirect("adminDashboard.jsp"); // Refresh admin dashboard
+        } else {
+            request.setAttribute("errorMessage", "Failed to approve booking.");
+            request.getRequestDispatcher("adminDashboard.jsp").forward(request, response);
         }
     }
 }

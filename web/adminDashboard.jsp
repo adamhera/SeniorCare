@@ -106,9 +106,55 @@
             stmtBookings.close();
         %>
     </table>
-
+    
     <hr>
+   <h3>Accepted Bookings</h3>
+<table border="1">
+    <tr>
+        <th>Booking ID</th>
+        <th>Nurse Name</th>
+        <th>Patient Name</th>
+        <th>Package</th>
+        <th>Booking Date</th>
+        <th>Booking Time</th>
+    </tr>
+    <%
+        String queryAcceptedBookings = 
+            "SELECT b.Booking_ID, e.Emp_Name AS NurseName, " +
+            "p.Patient_FName || ' ' || p.Patient_LName AS PatientName, " +
+            "pk.Package_Name, b.Booking_Date, b.Booking_Time " +
+            "FROM Booking b " +
+            "JOIN Employee e ON b.emp_id = e.Emp_ID " +
+            "JOIN Patient p ON b.Patient_ID = p.Patient_ID " +
+            "JOIN Package pk ON b.Package_ID = pk.Package_ID " +
+            "WHERE b.Status = 'Accept'";
 
+        PreparedStatement stmtAcceptedBookings = conn.prepareStatement(queryAcceptedBookings);
+        ResultSet rsAcceptedBookings = stmtAcceptedBookings.executeQuery();
+
+        while (rsAcceptedBookings.next()) {
+    %>
+    <tr>
+        <td><%= rsAcceptedBookings.getInt("Booking_ID") %></td>
+        <td><%= rsAcceptedBookings.getString("NurseName") %></td>
+        <td><%= rsAcceptedBookings.getString("PatientName") %></td>
+        <td><%= rsAcceptedBookings.getString("Package_Name") %></td>
+        <td><%= rsAcceptedBookings.getDate("Booking_Date") %></td>
+        <td><%= rsAcceptedBookings.getTime("Booking_Time") %></td>
+    </tr>
+    <% 
+        }
+        rsAcceptedBookings.close();
+        stmtAcceptedBookings.close();
+    %>
+</table>
+
+
+
+    
+    
+    <hr>
+    
     <!-- Package Management Section -->
     <h3>Package Management</h3>
     <table border="1">
@@ -117,11 +163,14 @@
             <th>Package Name</th>
             <th>Description</th>
             <th>Price</th>
+             <th>Nurse Name</th> <!-- New Column for Nurse Name -->
             <th>Action</th>
         </tr>
         <%
             // Query for packages
-            String queryPackages = "SELECT * FROM Package";
+            String queryPackages = "SELECT p.Package_ID, p.Package_Name, p.Package_Description, p.Package_Price, e.emp_Name " +
+                               "FROM Package p " +
+                               "LEFT JOIN Employee e ON p.emp_id = e.emp_ID";
             PreparedStatement stmtPackages = conn.prepareStatement(queryPackages);
             ResultSet rsPackages = stmtPackages.executeQuery();
 
@@ -132,6 +181,7 @@
             <td><%= rsPackages.getString("Package_Name") %></td>
             <td><%= rsPackages.getString("Package_Description") %></td>
             <td><%= rsPackages.getDouble("Package_Price") %></td>
+            <td><%= rsPackages.getString("emp_Name") != null ? rsPackages.getString("emp_Name") : "No nurse assigned" %></td> <!-- Nurse Name -->
             <td>
                 <form action="EditPackageServlet" method="POST">
     <!-- Action parameter to specify "Edit" -->

@@ -23,6 +23,10 @@ public class Package {
         this.price = price;
     }
 
+    public Package(int packageId, String packageName, String packageDescription, double packagePrice, int nurseId) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
     // Getters and setters
     public int getId() {
         return id;

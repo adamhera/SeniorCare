@@ -31,7 +31,7 @@
     <label for="packagePrice">Price:</label>
     <input type="number" name="packagePrice" step="0.01" value="<%= request.getAttribute("packagePrice") != null ? request.getAttribute("packagePrice") : "" %>" required>
     <br>
-
+    
     <button type="submit">Save Changes</button>
     <a href="adminDashboard.jsp">Back to Dashboard</a>
 </form>

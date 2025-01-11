@@ -52,6 +52,9 @@
                 <input type="date" name="bookingDate" required>
                 <label for="bookingTime">Time:</label>
                 <input type="time" name="bookingTime" required>
+                
+                
+                
                 <button type="submit">Book</button>
             </form>
         </td>
@@ -67,7 +70,7 @@
 </table>
 
 
-   <h2>Your Bookings</h2>
+ <h2>Your Bookings</h2>
 <table border="1">
     <tr>
         <th>Package Name</th>
@@ -75,13 +78,16 @@
         <th>Time</th>
         <th>Amount to Pay</th>
         <th>Status</th>
+        <th>Nurse Name</th> <!-- New Column for Nurse Name -->
         <th>Actions</th>
-        
     </tr>
     <%
         try (Connection conn = DriverManager.getConnection("jdbc:derby://localhost:1527/SeniorCareDB", "app", "app")) {
-            String queryBookings = "SELECT b.Booking_ID, p.Package_Name, b.Booking_Date, b.Booking_Time, p.Package_Price AS Amount_To_Pay, b.status " +
-                       "FROM Booking b JOIN Package p ON b.Package_ID = p.Package_ID WHERE b.Patient_ID = ?";
+            String queryBookings = "SELECT b.Booking_ID, p.Package_Name, b.Booking_Date, b.Booking_Time, p.Package_Price AS Amount_To_Pay, b.status, e.emp_Name " +
+                                   "FROM Booking b " +
+                                   "JOIN Package p ON b.Package_ID = p.Package_ID " +
+                                   "LEFT JOIN Employee e ON p.emp_id = e.emp_ID " +  // Join with Employee table to get nurse's name
+                                   "WHERE b.Patient_ID = ?";
 
             try (PreparedStatement stmtBooking = conn.prepareStatement(queryBookings)) {
                 stmtBooking.setInt(1, patientID);
@@ -96,6 +102,7 @@
         <td><%= rsBooking.getTime("Booking_Time") %></td>
         <td><%= rsBooking.getDouble("Amount_To_Pay") %></td>
         <td><%= rsBooking.getString("Status") %></td>
+        <td><%= rsBooking.getString("emp_Name") != null ? rsBooking.getString("emp_Name") : "No nurse assigned" %></td> <!-- Nurse Name -->
         <td>
             <form action="EditBookingServlet" method="GET" style="display:inline;">
                 <input type="hidden" name="bookingID" value="<%= bookingID %>">
@@ -116,6 +123,7 @@
         }
     %>
 </table>
+
 
 
     <h2>Your Information</h2>

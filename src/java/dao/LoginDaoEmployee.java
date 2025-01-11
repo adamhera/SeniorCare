@@ -10,6 +10,7 @@ package dao;
  * @author adamh
  */
 import bean.LoginBeanEmployee;
+import com.seniorcare.model.Employee;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -58,7 +59,7 @@ import util.DBConnection;
 public class LoginDaoEmployee {
 
     public String authenticateAndFetchName(LoginBeanEmployee loginBean) {
-        String query = "SELECT EMP_ROLE, EMP_NAME, STATUS FROM EMPLOYEE WHERE EMP_EMAIL = ? AND EMP_PASSWORD = ?";
+        String query = "SELECT EMP_ID, EMP_ROLE, EMP_NAME, STATUS FROM EMPLOYEE WHERE EMP_EMAIL = ? AND EMP_PASSWORD = ?";
         
         try (Connection con = DBConnection.createConnection();
              PreparedStatement ps = con.prepareStatement(query)) {
@@ -81,6 +82,7 @@ public class LoginDaoEmployee {
 
                     // Check if the role matches
                     if (rs.getString("EMP_ROLE").equalsIgnoreCase(loginBean.getRole())) {
+                        loginBean.setEmployeeId(rs.getInt("EMP_ID"));
                         return rs.getString("EMP_NAME");  // Return the employee name if role matches
                     }
                 }
@@ -90,4 +92,6 @@ public class LoginDaoEmployee {
         }
         return null; // Return null if authentication fails
     }
+    
+   
 }
