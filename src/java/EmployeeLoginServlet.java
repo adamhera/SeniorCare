@@ -37,12 +37,19 @@ public class EmployeeLoginServlet extends HttpServlet {
 
         LoginDaoEmployee loginDao = new LoginDaoEmployee();
         
-        String nurseName = loginDao.authenticateAndFetchName(loginBean); // Fetch nurse name if authentication is successful
+        String result = loginDao.authenticateAndFetchName(loginBean); // Fetch employee name, "REJECTED", or "PENDING"
 
-        if (nurseName != null) {
+        if ("REJECTED".equals(result)) {
+            // If status is rejected, redirect to pendingApproval.jsp
+            response.sendRedirect("pendingApproval.jsp");
+        } else if ("PENDING".equals(result)) {
+            // If status is pending, redirect to pendingApproval.jsp
+            response.sendRedirect("pendingApproval.jsp");
+        } else if (result != null) {
+            // If login is successful and status is not rejected or pending
             HttpSession session = request.getSession();
-            session.setAttribute("nurseID", email); // Store email (or unique ID)
-            session.setAttribute("nurseName", nurseName); // Store nurse name
+            session.setAttribute("employeeID", email); // Store email (or unique ID)
+            session.setAttribute("employeeName", result); // Store employee name
 
             if ("Admin".equalsIgnoreCase(role)) {
                 response.sendRedirect("adminDashboard.jsp");
@@ -53,6 +60,7 @@ public class EmployeeLoginServlet extends HttpServlet {
                 request.getRequestDispatcher("employeeLogin.jsp").forward(request, response);
             }
         } else {
+            // If authentication fails, show an error message
             request.setAttribute("errorMessage", "Invalid email or password.");
             request.getRequestDispatcher("employeeLogin.jsp").forward(request, response);
         }

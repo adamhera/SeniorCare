@@ -35,5 +35,24 @@ public class BookingDAO {
             return false;  // Return false if there's an exception
         }
     }
+    
+        public boolean updateBooking(int bookingID, String bookingDate, String bookingTime, int packageID) {
+        try (Connection conn = DBConnection.createConnection()) {
+            String query = "UPDATE Booking SET Booking_Date = ?, Booking_Time = ?, Package_ID = ? " +
+                           "WHERE Booking_ID = ?";
+            try (PreparedStatement stmt = conn.prepareStatement(query)) {
+                stmt.setString(1, bookingDate);
+                stmt.setString(2, bookingTime);
+                stmt.setInt(3, packageID);
+                stmt.setInt(4, bookingID);
+
+                int rowsUpdated = stmt.executeUpdate();
+                return rowsUpdated > 0;  // Return true if the booking was updated successfully
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;  // Return false if there's an exception
+        }
+    }
 }
 

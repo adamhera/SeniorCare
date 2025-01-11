@@ -4,10 +4,12 @@
     Author     : adamh
 --%>
 
-<%@page import="java.sql.ResultSet"%>
-<%@page import="java.sql.PreparedStatement"%>
-<%@page import="java.sql.DriverManager"%>
-<%@page import="java.sql.Connection"%>
+<%@ page session="true" %>
+<%@ page import="java.sql.ResultSet"%>
+<%@ page import="java.sql.PreparedStatement"%>
+<%@ page import="java.sql.DriverManager"%>
+<%@ page import="java.sql.Connection"%>
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -16,7 +18,7 @@
 <body>
     <h2>Admin Dashboard</h2>
 
-    <!-- Section for Pending Nurse Approvals -->
+    <!-- Section for Nurse Approvals -->
     <h3>Pending Nurse Approvals</h3>
     <table border="1">
         <tr>
@@ -28,7 +30,7 @@
         </tr>
         <% 
             Connection conn = DriverManager.getConnection("jdbc:derby://localhost:1527/SeniorCareDB", "app", "app");
-            
+
             // Query for pending nurse approvals
             String queryPendingNurses = "SELECT Emp_ID, Emp_Name, Emp_Email, Emp_Gender FROM Employee WHERE Status = 'Pending'";
             PreparedStatement stmtPendingNurses = conn.prepareStatement(queryPendingNurses);
@@ -58,46 +60,8 @@
 
     <hr>
 
-    <!-- Section for Patient List and Their Bookings -->
-    <h3>List of Patients and Their Bookings</h3>
-    <table border="1">
-        <tr>
-            <th>Patient ID</th>
-            <th>Patient Name</th>
-            <th>Package Name</th>
-            <th>Package Description</th>
-        </tr>
-        <%
-            // Query for patients and their package bookings
-            String queryPatients = "SELECT p.Patient_ID, " +
-                       "p.Patient_FName || ' ' || p.Patient_LName AS PatientName, " +
-                       "pk.Package_Name, pk.Package_Description " +
-                       "FROM Patient p " +
-                       "JOIN Booking b ON p.Patient_ID = b.Patient_ID " +
-                       "JOIN Package pk ON b.Package_ID = pk.Package_ID";
-
-            PreparedStatement stmtPatients = conn.prepareStatement(queryPatients);
-            ResultSet rsPatients = stmtPatients.executeQuery();
-
-            while (rsPatients.next()) {
-        %>
-        <tr>
-            <td><%= rsPatients.getInt("Patient_ID") %></td>
-            <td><%= rsPatients.getString("PatientName") %></td>
-            <td><%= rsPatients.getString("Package_Name") %></td>
-            <td><%= rsPatients.getString("Package_Description") %></td>
-        </tr>
-        <% 
-            }
-            rsPatients.close();
-            stmtPatients.close();
-        %>
-    </table>
-
-    <hr>
-
-    <!-- Booking Management Section -->
-    <h3>Booking Management</h3>
+    <!-- Section for Pending Bookings -->
+    <h3>Pending Bookings</h3>
     <table border="1">
         <tr>
             <th>Booking ID</th>
@@ -105,15 +69,17 @@
             <th>Package Name</th>
             <th>Booking Date</th>
             <th>Booking Time</th>
+            <th>Status</th>
             <th>Action</th>
         </tr>
         <%
-            // Query for all bookings
+            // Query for all pending bookings
             String queryBookings = "SELECT b.Booking_ID, p.Patient_FName || ' ' || p.Patient_LName AS PatientName, " +
-                                   "pk.Package_Name, b.Booking_Date, b.Booking_Time " +
+                                   "pk.Package_Name, b.Booking_Date, b.Booking_Time, b.Status " +
                                    "FROM Booking b " +
                                    "JOIN Patient p ON b.Patient_ID = p.Patient_ID " +
-                                   "JOIN Package pk ON b.Package_ID = pk.Package_ID";
+                                   "JOIN Package pk ON b.Package_ID = pk.Package_ID " +
+                                   "WHERE b.Status = 'Pending'";
 
             PreparedStatement stmtBookings = conn.prepareStatement(queryBookings);
             ResultSet rsBookings = stmtBookings.executeQuery();
@@ -126,11 +92,12 @@
             <td><%= rsBookings.getString("Package_Name") %></td>
             <td><%= rsBookings.getDate("Booking_Date") %></td>
             <td><%= rsBookings.getTime("Booking_Time") %></td>
+            <td><%= rsBookings.getString("Status") %></td>
             <td>
-                <form action="CancelRescheduleServlet" method="POST">
+                <form action="ApproveBookingServlet" method="POST">
                     <input type="hidden" name="bookingID" value="<%= rsBookings.getInt("Booking_ID") %>">
-                    <button type="submit" name="action" value="Cancel">Cancel</button>
-                    <button type="submit" name="action" value="Reschedule">Reschedule</button>
+                    <button type="submit" name="action" value="Approve">Approve</button>
+                    <button type="submit" name="action" value="Reject">Reject</button>
                 </form>
             </td>
         </tr>
@@ -143,50 +110,46 @@
 
     <hr>
 
-  <!-- Package Management Section -->
-<h3>Package Management</h3>
-<table border="1">
-    <tr>
-        <th>Package ID</th>
-        <th>Package Name</th>
-        <th>Description</th>
-        <th>Price</th>
-        <th>Action</th>
-    </tr>
-    <%
-        // Query for packages
-        String queryPackages = "SELECT * FROM Package";
-        PreparedStatement stmtPackages = conn.prepareStatement(queryPackages);
-        ResultSet rsPackages = stmtPackages.executeQuery();
+    <!-- Package Management Section -->
+    <h3>Package Management</h3>
+    <table border="1">
+        <tr>
+            <th>Package ID</th>
+            <th>Package Name</th>
+            <th>Description</th>
+            <th>Price</th>
+            <th>Action</th>
+        </tr>
+        <%
+            // Query for packages
+            String queryPackages = "SELECT * FROM Package";
+            PreparedStatement stmtPackages = conn.prepareStatement(queryPackages);
+            ResultSet rsPackages = stmtPackages.executeQuery();
 
-        while (rsPackages.next()) {
-    %>
-    <tr>
-        <td><%= rsPackages.getInt("Package_ID") %></td>
-        <td><%= rsPackages.getString("Package_Name") %></td>
-        <td><%= rsPackages.getString("Package_Description") %></td>
-        <td><%= rsPackages.getDouble("Package_Price") %></td>
-        <td>
-            <!-- Edit Button -->
-            <form action="EditPackageServlet" method="POST" style="display: inline;">
-    <input type="hidden" name="packageID" value="<%= rsPackages.getInt("Package_ID") %>">
-    <input type="hidden" name="action" value="Edit">  <!-- Add this line -->
-    <button type="submit">Edit</button>
-</form>
-        </td>
-    </tr>
-    <% 
-        }
-        rsPackages.close();
-        stmtPackages.close();
-    %>
-</table>
-
-
+            while (rsPackages.next()) {
+        %>
+        <tr>
+            <td><%= rsPackages.getInt("Package_ID") %></td>
+            <td><%= rsPackages.getString("Package_Name") %></td>
+            <td><%= rsPackages.getString("Package_Description") %></td>
+            <td><%= rsPackages.getDouble("Package_Price") %></td>
+            <td>
+                <form action="EditPackageServlet" method="POST">
+                    <input type="hidden" name="packageID" value="<%= rsPackages.getInt("Package_ID") %>">
+                    <button type="submit">Edit</button>
+                </form>
+            </td>
+        </tr>
+        <% 
+            }
+            rsPackages.close();
+            stmtPackages.close();
+        %>
+    </table>
 
     <hr>
 
-    <!-- Reports and Statistics -->
+    <!-- Reports and Statistics Section -->
     <h3>Reports and Statistics</h3>
     <%
         // Query for total bookings and revenue
@@ -219,5 +182,14 @@
         <input type="password" id="password" name="password" required><br>
         <button type="submit">Update Profile</button>
     </form>
+    
+    <hr>
+
+    <!-- Logout -->
+    <form action="LogoutServlet" method="POST">
+        <button type="submit">Logout</button>
+    </form>
+
 </body>
 </html>
+

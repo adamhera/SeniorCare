@@ -25,9 +25,11 @@ public class RegisterDao {
         String email = registerBean.getEmail();
         String password = registerBean.getPassword();
         
+        
         String jdbcURL = "jdbc:derby://localhost:1527/SeniorCareDB";
         String dbUser = "app";
         String dbPassword = "app";
+
     
         String sql = "INSERT INTO PATIENT (PATIENT_FNAME, PATIENT_LNAME, PATIENT_PHONE, PATIENT_ADDRESS, PATIENT_EMAIL, PATIENT_PASSWORD) VALUES (?, ?, ?, ?, ?, ?)";
         try (Connection conn = DriverManager.getConnection(jdbcURL, dbUser, dbPassword);

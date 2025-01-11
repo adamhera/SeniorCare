@@ -58,6 +58,7 @@ public class BookingServlet extends HttpServlet {
 }
 */
 
+/*using dao*/
 @WebServlet("/BookingServlet")
 public class BookingServlet extends HttpServlet {
 

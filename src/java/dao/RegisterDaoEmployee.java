@@ -28,7 +28,8 @@ public class RegisterDaoEmployee {
         String status = registerBeanEmployee.getStatus();
         String gender = registerBeanEmployee.getGender();
         String password = registerBeanEmployee.getPassword();
-
+        
+        //Ni guna javdb
         String jdbcURL = "jdbc:derby://localhost:1527/SeniorCareDB";
         String dbUser = "app";
         String dbPassword = "app";
