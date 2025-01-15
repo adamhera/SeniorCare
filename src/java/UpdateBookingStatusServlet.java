@@ -41,27 +41,19 @@ public class UpdateBookingStatusServlet extends HttpServlet {
         }
 
         BookingDAO bookingDao = new BookingDAO();
-        boolean isUpdated = bookingDao.updateBookingStatus(bookingId, action);
+        boolean isUpdated = bookingDao.updateBookingStatus(bookingId, action, employeeId);
 
         if (isUpdated && action.equalsIgnoreCase("Accept")) {
-            // Assign nurse to booking
-            int nurseId = Integer.parseInt(employeeId.toString()); // Ensure it's an integer
-            boolean isInserted = bookingDao.assignBookingToNurse(nurseId, bookingId);
-
-            if (isInserted) {
-                response.sendRedirect("nurseDashboard.jsp"); // Refresh nurse dashboard
-            } else {
-                request.setAttribute("errorMessage", "Failed to assign booking to nurse.");
-                request.getRequestDispatcher("nurseDashboard.jsp").forward(request, response);
-            }
+            response.sendRedirect("nurseDashboard.jsp"); // Redirect to nurse dashboard after accepting
         } else if (isUpdated) {
-            response.sendRedirect("nurseDashboard.jsp"); // Refresh nurse dashboard
+            response.sendRedirect("nurseDashboard.jsp"); // Refresh nurse dashboard for rejected bookings
         } else {
             request.setAttribute("errorMessage", "Failed to update booking status.");
             request.getRequestDispatcher("nurseDashboard.jsp").forward(request, response);
         }
     }
 }
+
 
 
 

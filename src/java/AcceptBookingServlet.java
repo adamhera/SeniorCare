@@ -27,7 +27,7 @@ public class AcceptBookingServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         // Get the booking ID from the request
         int bookingID = Integer.parseInt(request.getParameter("bookingID"));
-
+         Integer nurseEmpId = (Integer) request.getSession().getAttribute("emp_id");
         Connection conn = null;
         PreparedStatement stmt = null;
         try {
@@ -35,9 +35,10 @@ public class AcceptBookingServlet extends HttpServlet {
             conn = DriverManager.getConnection("jdbc:derby://localhost:1527/SeniorCareDB", "app", "app");
 
             // Update the booking status to "Accepted"
-            String updateQuery = "UPDATE Booking SET Status = 'Accepted' WHERE Booking_ID = ?";
+            String updateQuery = "UPDATE Booking SET Status = 'Accepted', emp_id = ? WHERE Booking_ID = ?";
             stmt = conn.prepareStatement(updateQuery);
-            stmt.setInt(1, bookingID);
+            stmt.setInt(1, nurseEmpId); // set the nurse ID
+            stmt.setInt(2, bookingID); // set the booking ID
 
             int rowsAffected = stmt.executeUpdate();
 

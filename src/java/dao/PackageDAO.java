@@ -15,6 +15,8 @@ import java.sql.ResultSet;
 import util.DBConnection;
 import com.seniorcare.model.Package;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class PackageDAO {
     public Package getPackageById(int packageId) throws Exception {
@@ -63,4 +65,27 @@ public class PackageDAO {
     }
 }
 
+   
+   // New method to retrieve all package names
+    public List<String> getAllPackageNames() {
+        List<String> packageNames = new ArrayList<>();
+
+        // Use DBConnection utility to get the connection
+        try (Connection conn = DBConnection.createConnection()) {
+            String query = "SELECT Package_Name FROM Package";
+            PreparedStatement stmt = conn.prepareStatement(query);
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                packageNames.add(rs.getString("Package_Name"));
+            }
+
+            rs.close();
+            stmt.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return packageNames;
+    }
 }

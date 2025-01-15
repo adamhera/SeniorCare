@@ -13,21 +13,18 @@ public class NurseInfo {
     private String empEmail;
     private String nurseCertification;
     private String nurseShift;
-     private int empID;
-    // Default constructor (no arguments)
+    private int empID;
+    private String nursePackage;  // Added field for the package the nurse is enrolled in
+
     public NurseInfo() {
     }
 
-    // Parameterized constructor
-    public NurseInfo(String empEmail, String nurseCertification, String nurseShift, int empID) {
+    public NurseInfo(String empEmail, String nurseCertification, String nurseShift, int empID, String nursePackage) {
         this.empEmail = empEmail;
         this.nurseCertification = nurseCertification;
         this.nurseShift = nurseShift;
         this.empID = empID;
-    }
-
-    public NurseInfo(String nurseCertification, String nurseShift) {
-        
+        this.nursePackage = nursePackage; // Initialize package
     }
 
     // Getters and setters
@@ -63,5 +60,11 @@ public class NurseInfo {
         this.empID = empID;
     }
 
-    
+    public String getNursePackage() {
+        return nursePackage;  // Getter for the nurse's selected package
+    }
+
+    public void setNursePackage(String nursePackage) {
+        this.nursePackage = nursePackage;  // Setter for the nurse's selected package
+    }
 }

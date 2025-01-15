@@ -25,16 +25,14 @@ public class UpdateNurseInfoServlet extends HttpServlet {
         // Get the new data from the form
         String nurseCertification = request.getParameter("nurse_certification");
         String nurseShift = request.getParameter("nurse_shift");
-
-        // Check if the data is being passed correctly
-        System.out.println("Nurse Certification: " + nurseCertification);
-        System.out.println("Nurse Shift: " + nurseShift);
+        String nursePackage = request.getParameter("nurse_package");  // Get the package selected by the nurse
 
         // Create NurseInfo object and update it
         NurseInfo updatedNurseInfo = new NurseInfo();
         updatedNurseInfo.setEmpId(empId); // Use emp_id from session
         updatedNurseInfo.setNurseCertification(nurseCertification);
         updatedNurseInfo.setNurseShift(nurseShift);
+        updatedNurseInfo.setNursePackage(nursePackage);  // Set the package
 
         // Call the DAO to update nurse info
         NurseInfoDao dao = new NurseInfoDao();
@@ -55,5 +53,6 @@ public class UpdateNurseInfoServlet extends HttpServlet {
         processRequest(request, response);
     }
 }
+
 
 

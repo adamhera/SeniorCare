@@ -1,4 +1,4 @@
-<%-- 
+<%-- --%>
     Document   : adminDashboard
     Created on : Dec 29, 2024, 9:01:29 PM
     Author     : adamh
@@ -61,51 +61,44 @@
 
     <!-- Section for Pending Bookings -->
     <h3>Pending Bookings</h3>
-    <table border="1">
-        <tr>
-            <th>Booking ID</th>
-            <th>Patient Name</th>
-            <th>Package Name</th>
-            <th>Booking Date</th>
-            <th>Booking Time</th>
-            <th>Status</th>
-            <th>Action</th>
-        </tr>
-        <%
-            // Query for all pending bookings
-            String queryBookings = "SELECT b.Booking_ID, p.Patient_FName || ' ' || p.Patient_LName AS PatientName, " +
-                                   "pk.Package_Name, b.Booking_Date, b.Booking_Time, b.Status " +
-                                   "FROM Booking b " +
-                                   "JOIN Patient p ON b.Patient_ID = p.Patient_ID " +
-                                   "JOIN Package pk ON b.Package_ID = pk.Package_ID " +
-                                   "WHERE b.Status = 'Pending'";
+<table border="1">
+    <tr>
+        <th>Booking ID</th>
+        <th>Patient Name</th>
+        <th>Package Name</th>
+        <th>Booking Date</th>
+        <th>Booking Time</th>
+        <th>Status</th>
+    </tr>
+    <%
+        // Query for all pending bookings
+        String queryBookings = "SELECT b.Booking_ID, p.Patient_FName || ' ' || p.Patient_LName AS PatientName, " +
+                               "pk.Package_Name, b.Booking_Date, b.Booking_Time, b.Status " +
+                               "FROM Booking b " +
+                               "JOIN Patient p ON b.Patient_ID = p.Patient_ID " +
+                               "JOIN Package pk ON b.Package_ID = pk.Package_ID " +
+                               "WHERE b.Status = 'Pending'";
 
-            PreparedStatement stmtBookings = conn.prepareStatement(queryBookings);
-            ResultSet rsBookings = stmtBookings.executeQuery();
+        PreparedStatement stmtBookings = conn.prepareStatement(queryBookings);
+        ResultSet rsBookings = stmtBookings.executeQuery();
 
-            while (rsBookings.next()) {
-        %>
-        <tr>
-            <td><%= rsBookings.getInt("Booking_ID") %></td>
-            <td><%= rsBookings.getString("PatientName") %></td>
-            <td><%= rsBookings.getString("Package_Name") %></td>
-            <td><%= rsBookings.getDate("Booking_Date") %></td>
-            <td><%= rsBookings.getTime("Booking_Time") %></td>
-            <td><%= rsBookings.getString("Status") %></td>
-            <td>
-                <form action="ApproveBookingServlet" method="POST">
-                    <input type="hidden" name="bookingID" value="<%= rsBookings.getInt("Booking_ID") %>">
-                    <button type="submit" name="action" value="Approve">Approve</button>
-                    <button type="submit" name="action" value="Reject">Reject</button>
-                </form>
-            </td>
-        </tr>
-        <% 
-            }
-            rsBookings.close();
-            stmtBookings.close();
-        %>
-    </table>
+        while (rsBookings.next()) {
+    %>
+    <tr>
+        <td><%= rsBookings.getInt("Booking_ID") %></td>
+        <td><%= rsBookings.getString("PatientName") %></td>
+        <td><%= rsBookings.getString("Package_Name") %></td>
+        <td><%= rsBookings.getDate("Booking_Date") %></td>
+        <td><%= rsBookings.getTime("Booking_Time") %></td>
+        <td><%= rsBookings.getString("Status") %></td>
+    </tr>
+    <% 
+        }
+        rsBookings.close();
+        stmtBookings.close();
+    %>
+</table>
+
     
     <hr>
    <h3>Accepted Bookings</h3>
@@ -120,14 +113,15 @@
     </tr>
     <%
         String queryAcceptedBookings = 
-            "SELECT b.Booking_ID, e.Emp_Name AS NurseName, " +
-            "p.Patient_FName || ' ' || p.Patient_LName AS PatientName, " +
-            "pk.Package_Name, b.Booking_Date, b.Booking_Time " +
+                "SELECT b.Booking_ID, e.Emp_Name AS NurseName, " +
+            "p.Patient_FName, p.Patient_LName, pk.Package_Name, " +
+            "b.Booking_Date, b.Booking_Time " +
             "FROM Booking b " +
-            "JOIN Employee e ON b.emp_id = e.Emp_ID " +
-            "JOIN Patient p ON b.Patient_ID = p.Patient_ID " +
-            "JOIN Package pk ON b.Package_ID = pk.Package_ID " +
+            "LEFT JOIN Employee e ON b.emp_id = e.Emp_ID " +
+            "LEFT JOIN Patient p ON b.Patient_ID = p.Patient_ID " +
+            "LEFT JOIN Package pk ON b.Package_ID = pk.Package_ID " +
             "WHERE b.Status = 'Accept'";
+
 
         PreparedStatement stmtAcceptedBookings = conn.prepareStatement(queryAcceptedBookings);
         ResultSet rsAcceptedBookings = stmtAcceptedBookings.executeQuery();
@@ -136,9 +130,10 @@
     %>
     <tr>
         <td><%= rsAcceptedBookings.getInt("Booking_ID") %></td>
-        <td><%= rsAcceptedBookings.getString("NurseName") %></td>
-        <td><%= rsAcceptedBookings.getString("PatientName") %></td>
-        <td><%= rsAcceptedBookings.getString("Package_Name") %></td>
+        <td><%= rsAcceptedBookings.getString("NurseName") != null ? rsAcceptedBookings.getString("NurseName") : "N/A" %></td>
+        <td><%= (rsAcceptedBookings.getString("Patient_FName") != null ? rsAcceptedBookings.getString("Patient_FName") : "") + 
+                 " " + (rsAcceptedBookings.getString("Patient_LName") != null ? rsAcceptedBookings.getString("Patient_LName") : "") %></td>
+        <td><%= rsAcceptedBookings.getString("Package_Name") != null ? rsAcceptedBookings.getString("Package_Name") : "N/A" %></td>
         <td><%= rsAcceptedBookings.getDate("Booking_Date") %></td>
         <td><%= rsAcceptedBookings.getTime("Booking_Time") %></td>
     </tr>
@@ -244,8 +239,9 @@
 </body>
 </html>
 
---%>
 
+
+<%--
 <%@ page import="java.sql.ResultSet"%>
 <%@ page import="java.sql.PreparedStatement"%>
 <%@ page import="java.sql.DriverManager"%>
@@ -716,3 +712,4 @@
 </body>
 </html>
 
+--%>

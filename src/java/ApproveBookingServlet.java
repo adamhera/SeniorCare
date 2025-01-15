@@ -29,8 +29,19 @@ public class ApproveBookingServlet extends HttpServlet {
             throws ServletException, IOException {
         int bookingId = Integer.parseInt(request.getParameter("bookingID"));
 
+        // Retrieve the logged-in nurse's emp_id from the session
+        Integer nurseEmpId = (Integer) request.getSession().getAttribute("emp_id");
+
+        if (nurseEmpId == null) {
+            // Handle the case where the nurse is not logged in
+            request.setAttribute("errorMessage", "No nurse is logged in.");
+            request.getRequestDispatcher("errorPage.jsp").forward(request, response);
+            return;
+        }
+
+        // Call the approveBooking method from BookingDAO
         BookingDAO bookingDao = new BookingDAO();
-        boolean isApproved = bookingDao.approveBooking(bookingId);
+        boolean isApproved = bookingDao.approveBooking(bookingId, nurseEmpId);
 
         if (isApproved) {
             response.sendRedirect("adminDashboard.jsp"); // Refresh admin dashboard
