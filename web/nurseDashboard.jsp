@@ -32,65 +32,167 @@
 <html>
 <head>
     <title>Nurse Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f9f9f9;
+            color: #333;
+        }
+
+        h2, h3 {
+            color: #2c3e50;
+        }
+
+        a {
+            color: #3498db;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        header {
+            background-color: #2c3e50;
+            color: #fff;
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        header a {
+            color: #fff;
+            font-size: 14px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 20px auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .info {
+            margin-bottom: 20px;
+            padding: 10px;
+            background-color: #ecf0f1;
+            border-left: 4px solid #3498db;
+        }
+
+        .btn {
+            background-color: #3498db;
+            color: #fff;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .btn:hover {
+            background-color: #2980b9;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        table th, table td {
+            padding: 10px;
+            text-align: left;
+            border: 1px solid #ddd;
+        }
+
+        table th {
+            background-color: #3498db;
+            color: white;
+        }
+
+        table tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        .actions button {
+            margin-right: 5px;
+        }
+
+        .logout-btn {
+            display: inline-block;
+            margin-top: 20px;
+        }
+    </style>
 </head>
 <body>
-    <h2>Welcome, <%= session.getAttribute("employeeName") %>!</h2>
-    <a href="LogoutServlet">Logout</a>
+    <header>
+        <h2>Nurse Dashboard</h2>
+        <a href="LogoutServlet">Logout</a>
+    </header>
 
-    <!-- Nurse Details Section -->
-    <h3>Your Information</h3>
-    <p><strong>Certification:</strong> <%= nurseInfo != null ? nurseInfo.getNurseCertification() : "Not Available" %></p>
-    <p><strong>Shift:</strong> <%= nurseInfo != null ? nurseInfo.getNurseShift() : "Not Available" %></p>
-    <p><strong>Selected Package:</strong> 
-       <%= nurseInfo.getNursePackage() != null && !nurseInfo.getNursePackage().isEmpty() ? nurseInfo.getNursePackage() : "No enrolled package" %>
-    </p>
-     <!-- Edit My Information Button -->
-    <a href="editNurseInfo.jsp">
-        <button>Edit My Information</button>
-    </a>
-    <!-- Pending Bookings Section (if nurse has a selected package) -->
-    <% if (selectedPackage != null && !selectedPackage.isEmpty()) { %>
-        <h3>List of Pending Bookings</h3>
-        <table border="1">
-            <tr>
-                <th>Booking ID</th>
-                <th>Patient Name</th>
-                <th>Package Name</th>
-                <th>Booking Date</th>
-                <th>Booking Time</th>
-                <th>Action</th>
-            </tr>
-            <% 
-                // Fetch and display bookings matching the nurse's selected package
-                BookingDAO bookingDao = new BookingDAO();
-                List<Booking> bookings = bookingDao.getPendingBookingsByPackage(selectedPackage);
-                for (Booking booking : bookings) {
-            %>
-            <tr>
-                <td><%= booking.getBookingId() %></td>
-                <td><%= booking.getPatientName() %></td>
-                <td><%= booking.getPackageName() %></td>
-                <td><%= booking.getBookingDate() %></td>
-                <td><%= booking.getBookingTime() %></td>
-                <td>
-                    <form action="UpdateBookingStatusServlet" method="POST">
-                        <input type="hidden" name="bookingID" value="<%= booking.getBookingId() %>">
-                        <button type="submit" name="action" value="Accept">Accept</button>
-                        <button type="submit" name="action" value="Reject">Reject</button>
-                    </form>
-                </td>
-            </tr>
-            <% 
-                }
-            %>
-        </table>
-    <% } else { %>
-        <p>No package selected. Please select a package in the <a href="editNurseInfo.jsp">Edit My Information</a> page.</p>
-    <% } %>
+    <div class="container">
+        <!-- Nurse Details Section -->
+        <h3>Your Information</h3>
+        <div class="info">
+            <p><strong>Certification:</strong> <%= nurseInfo != null ? nurseInfo.getNurseCertification() : "Not Available" %></p>
+            <p><strong>Shift:</strong> <%= nurseInfo != null ? nurseInfo.getNurseShift() : "Not Available" %></p>
+            <p><strong>Selected Package:</strong>
+                <%= nurseInfo.getNursePackage() != null && !nurseInfo.getNursePackage().isEmpty() ? nurseInfo.getNursePackage() : "No enrolled package" %>
+            </p>
+        </div>
 
-    <!-- Logout button -->
-    <form action="LogoutServlet" method="POST">
-        <button type="submit">Logout</button>
-    </form>
+        <a href="editNurseInfo.jsp">
+            <button class="btn">Edit My Information</button>
+        </a>
+
+        <!-- Pending Bookings Section (if nurse has a selected package) -->
+        <% if (selectedPackage != null && !selectedPackage.isEmpty()) { %>
+            <h3>List of Pending Bookings</h3>
+            <table>
+                <tr>
+                    <th>Booking ID</th>
+                    <th>Patient Name</th>
+                    <th>Package Name</th>
+                    <th>Booking Date</th>
+                    <th>Booking Time</th>
+                    <th>Action</th>
+                </tr>
+                <% 
+                    BookingDAO bookingDao = new BookingDAO();
+                    List<Booking> bookings = bookingDao.getPendingBookingsByPackage(selectedPackage);
+                    for (Booking booking : bookings) {
+                %>
+                <tr>
+                    <td><%= booking.getBookingId() %></td>
+                    <td><%= booking.getPatientName() %></td>
+                    <td><%= booking.getPackageName() %></td>
+                    <td><%= booking.getBookingDate() %></td>
+                    <td><%= booking.getBookingTime() %></td>
+                    <td class="actions">
+                        <form action="UpdateBookingStatusServlet" method="POST" style="display:inline;">
+                            <input type="hidden" name="bookingID" value="<%= booking.getBookingId() %>">
+                            <button class="btn" type="submit" name="action" value="Accept">Accept</button>
+                            <button class="btn" type="submit" name="action" value="Reject" style="background-color: #e74c3c;">Reject</button>
+                        </form>
+                    </td>
+                </tr>
+                <% 
+                    }
+                %>
+            </table>
+        <% } else { %>
+            <p>No package selected. Please select a package in the <a href="editNurseInfo.jsp">Edit My Information</a> page.</p>
+        <% } %>
+
+        <!-- Logout button -->
+        <form action="LogoutServlet" method="POST" class="logout-btn">
+            <button class="btn" type="submit">Logout</button>
+        </form>
+    </div>
 </body>
 </html>

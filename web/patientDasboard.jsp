@@ -244,6 +244,25 @@
             background-color: #f8f8f8;
             color: #333;
         }
+        
+        .cannot-cancel {
+        color: red; /* Text color */
+        font-weight: bold; /* Bold text */
+        font-size: 14px; /* Font size */
+        background-color: #ffe5e5; /* Light red background */
+        padding: 5px 10px; /* Padding inside the span */
+        border-radius: 5px; /* Rounded corners */
+        border: 1px solid #ffcccc; /* Light red border */
+        display: inline-block; /* Align nicely in a line */
+        text-align: center; /* Center text */
+        }
+        
+        .cannot-edit {
+            color: gray; /* Neutral color for disabled messages */
+            font-size: 14px; /* Adjust font size */
+            font-style: italic; /* Italicize text for distinction */
+            padding: 2px 5px; /* Add some padding */
+        }
     </style>
 </head>
 <body>
@@ -322,7 +341,7 @@
                         <th>Time</th>
                         <th>Amount to Pay</th>
                         <th>Status</th>
-                        <th>Nurse Name</th>
+                        <!--<th>Nurse Name</th>-->
                         <th>Actions</th>
                     </tr>
                     <%
@@ -346,16 +365,26 @@
                         <td><%= rsBooking.getTime("Booking_Time") %></td>
                         <td><%= rsBooking.getDouble("Amount_To_Pay") %></td>
                         <td><%= rsBooking.getString("Status") %></td>
-                        <td><%= rsBooking.getString("emp_Name") != null ? rsBooking.getString("emp_Name") : "No nurse assigned" %></td>
+                        <%-- <td><%= rsBooking.getString("emp_Name") != null ? rsBooking.getString("emp_Name") : "No nurse assigned" %></td> --%>
                         <td>
                             <form action="EditBookingServlet" method="GET" style="display:inline;">
-                                <input type="hidden" name="bookingID" value="<%= bookingID %>">
+                            <input type="hidden" name="bookingID" value="<%= bookingID %>">
+                            <% if (!"Accept".equalsIgnoreCase(rsBooking.getString("Status"))) { %>
                                 <button type="submit" class="btn">Edit</button>
-                            </form>
+                            <% } else { %>
+                                <span class="cannot-edit">Cannot edit</span>
+                            <% } %>
+                             </form>
+                                
+                            <% if ("Pending".equals(rsBooking.getString("Status"))) { %>
                             <form action="CancelBookingServlet" method="POST" style="display:inline;">
                                 <input type="hidden" name="bookingID" value="<%= bookingID %>">
                                 <button type="submit" class="btn logout" onclick="return confirm('Are you sure you want to cancel this booking?');">Cancel</button>
                             </form>
+                                <% } else { %>
+                                    <span class="cannot-cancel">Cannot cancel</span>
+
+                                <% } %>
                         </td>
                     </tr>
                     <%

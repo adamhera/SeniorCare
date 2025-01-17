@@ -208,5 +208,36 @@ public class BookingDAO {
     }
     return bookings;
 }
+    
+    public String getBookingStatus(int bookingId) {
+    String status = null;
+    String query = "SELECT Status FROM BOOKING WHERE Booking_ID = ?";
+    try (Connection conn = DBConnection.createConnection();
+         PreparedStatement ps = conn.prepareStatement(query)) {
+        ps.setInt(1, bookingId);
+        ResultSet rs = ps.executeQuery();
+        if (rs.next()) {
+            status = rs.getString("Status");
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+    return status;
+}
+
+    
+    public boolean deleteBooking(int bookingId) {
+    String query = "DELETE FROM BOOKING WHERE Booking_ID = ?";
+    try (Connection conn = DBConnection.createConnection();
+         PreparedStatement ps = conn.prepareStatement(query)) {
+        ps.setInt(1, bookingId);
+        int rowsAffected = ps.executeUpdate();
+        return rowsAffected > 0;
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+    return false;
+}
+
 }
 
