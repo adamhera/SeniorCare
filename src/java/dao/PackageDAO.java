@@ -66,7 +66,7 @@ public class PackageDAO {
     }
 }
 
-   /*
+   
    // New method to retrieve all package names
     public List<String> getAllPackageNames() {
         List<String> packageNames = new ArrayList<>();
@@ -88,5 +88,5 @@ public class PackageDAO {
         }
 
         return packageNames;
-    }*/
+    }
 }
