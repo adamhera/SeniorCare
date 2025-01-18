@@ -20,7 +20,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class BookingDAO {
-
+    
+    //guna
     public boolean createBooking(int patientID, int packageID, String bookingDate, String bookingTime) {
         try (Connection conn = DBConnection.createConnection()) {
             String query = "INSERT INTO Booking (Patient_ID, Package_ID, Booking_Date, Booking_Time, Status) " +
@@ -39,7 +40,8 @@ public class BookingDAO {
             return false;  // Return false if there's an exception
         }
     }
-    
+        
+        //guna
         public boolean updateBooking(int bookingID, String bookingDate, String bookingTime, int packageID) {
         try (Connection conn = DBConnection.createConnection()) {
             String query = "UPDATE Booking SET Booking_Date = ?, Booking_Time = ?, Package_ID = ? " +
@@ -59,22 +61,23 @@ public class BookingDAO {
         }
     }
         
+        //guna
         public boolean updateBookingStatus(int bookingId, String status, int empId) {
-    String query = "UPDATE Booking SET Status = ?, emp_id = ? WHERE Booking_ID = ?";
-    try (Connection conn = DBConnection.createConnection();
-         PreparedStatement ps = conn.prepareStatement(query)) {
-        ps.setString(1, status);
-        ps.setInt(2, empId);  // Set the nurse's emp_id in the booking
-        ps.setInt(3, bookingId);
-        int rowsUpdated = ps.executeUpdate();
-        return rowsUpdated > 0; // Return true if the update was successful
-    } catch (SQLException e) {
-        e.printStackTrace();
+        String query = "UPDATE Booking SET Status = ?, emp_id = ? WHERE Booking_ID = ?";
+        try (Connection conn = DBConnection.createConnection();
+             PreparedStatement ps = conn.prepareStatement(query)) {
+            ps.setString(1, status);
+            ps.setInt(2, empId);  // Set the nurse's emp_id in the booking
+            ps.setInt(3, bookingId);
+            int rowsUpdated = ps.executeUpdate();
+            return rowsUpdated > 0; // Return true if the update was successful
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
-    return false;
-}
 
-
+   /*     
    public boolean approveBooking(int bookingId, int nurseId) {
     Connection conn = null;
     PreparedStatement stmt = null;
@@ -132,8 +135,8 @@ public class BookingDAO {
         }
     }
 
-    return isApproved;
-}
+        return isApproved;
+    }
 
     
     public boolean assignBookingToNurse(int nurseId, int bookingId) {
@@ -178,8 +181,9 @@ public class BookingDAO {
         }
         return bookings;
     }
+*/
     
-    
+    //guna
     public List<Booking> getPendingBookingsByPackage(String packageName) {
     List<Booking> bookings = new ArrayList<>();
     String query = "SELECT b.Booking_ID, p.Patient_FName || ' ' || p.Patient_LName AS PatientName, " +
@@ -207,8 +211,9 @@ public class BookingDAO {
         e.printStackTrace();  // Log error
     }
     return bookings;
-}
+    }
     
+    /*
     public String getBookingStatus(int bookingId) {
     String status = null;
     String query = "SELECT Status FROM BOOKING WHERE Booking_ID = ?";
@@ -223,7 +228,7 @@ public class BookingDAO {
         e.printStackTrace();
     }
     return status;
-}
+    }
 
     
     public boolean deleteBooking(int bookingId) {
@@ -237,7 +242,7 @@ public class BookingDAO {
         e.printStackTrace();
     }
     return false;
-}
-
+    }
+    */
 }
 

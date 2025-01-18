@@ -19,6 +19,7 @@ import util.DBConnection;
 
 public class NurseInfoDao {
 
+//guna    
 public NurseInfo getNurseInfoById(Integer empId) {
     NurseInfo nurseInfo = null;
     String query = "SELECT * FROM NURSE WHERE EMP_ID = ?";
@@ -42,34 +43,35 @@ public NurseInfo getNurseInfoById(Integer empId) {
 
     return nurseInfo;
 }
+    
+    //guna 
+    public boolean updateNurseInfo(NurseInfo updatedNurseInfo) {
+        System.out.println("Updating nurse info for empId: " + updatedNurseInfo.getEmpId());
+        System.out.println("Nurse Package: " + updatedNurseInfo.getNursePackage());
 
-public boolean updateNurseInfo(NurseInfo updatedNurseInfo) {
-    System.out.println("Updating nurse info for empId: " + updatedNurseInfo.getEmpId());
-    System.out.println("Nurse Package: " + updatedNurseInfo.getNursePackage());
+        // Ensure that NURSE_PACKAGE is included in the update query
+        String query = "UPDATE NURSE SET NURSE_CERTIFICATION = ?, NURSE_SHIFT = ?, NURSE_PACKAGE = ? WHERE EMP_ID = ?";
 
-    // Ensure that NURSE_PACKAGE is included in the update query
-    String query = "UPDATE NURSE SET NURSE_CERTIFICATION = ?, NURSE_SHIFT = ?, NURSE_PACKAGE = ? WHERE EMP_ID = ?";
+        try (Connection con = DBConnection.createConnection();
+             PreparedStatement ps = con.prepareStatement(query)) {
 
-    try (Connection con = DBConnection.createConnection();
-         PreparedStatement ps = con.prepareStatement(query)) {
+            ps.setString(1, updatedNurseInfo.getNurseCertification());
+            ps.setString(2, updatedNurseInfo.getNurseShift());
+            ps.setString(3, updatedNurseInfo.getNursePackage());  // Ensure package is being set
+            ps.setInt(4, updatedNurseInfo.getEmpId());
 
-        ps.setString(1, updatedNurseInfo.getNurseCertification());
-        ps.setString(2, updatedNurseInfo.getNurseShift());
-        ps.setString(3, updatedNurseInfo.getNursePackage());  // Ensure package is being set
-        ps.setInt(4, updatedNurseInfo.getEmpId());
-
-        int rowsUpdated = ps.executeUpdate();
-        if (rowsUpdated > 0) {
-            System.out.println("Update successful");
-            return true;
-        } else {
-            System.out.println("No rows updated");
+            int rowsUpdated = ps.executeUpdate();
+            if (rowsUpdated > 0) {
+                System.out.println("Update successful");
+                return true;
+            } else {
+                System.out.println("No rows updated");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
-    } catch (SQLException e) {
-        e.printStackTrace();
-    }
 
-    return false;
-}
+        return false;
+    }
     
 }

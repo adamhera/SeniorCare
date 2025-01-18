@@ -15,7 +15,8 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 public class PatientDAO {
-
+    
+    //guna
     public boolean updatePatientInfo(int patientID, String firstName, String lastName, String email, String password, String address) {
         String query;
         if (password != null && !password.trim().isEmpty()) {

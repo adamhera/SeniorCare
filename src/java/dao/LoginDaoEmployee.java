@@ -57,7 +57,8 @@ import util.DBConnection;
 
 
 public class LoginDaoEmployee {
-
+    
+    //Guna
     public String authenticateAndFetchName(LoginBeanEmployee loginBean) {
         String query = "SELECT EMP_ID, EMP_ROLE, EMP_NAME, STATUS FROM EMPLOYEE WHERE EMP_EMAIL = ? AND EMP_PASSWORD = ?";
         

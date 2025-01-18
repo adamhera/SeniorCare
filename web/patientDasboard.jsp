@@ -327,77 +327,74 @@
             </div>
         </div>
 
-        <!-- Your Bookings -->
-        <div class="dropdown">
-            <div class="dropdown-header" onclick="toggleDropdown('bookingsDropdown')">
-                Your Bookings
-                <span>&#9660;</span>
-            </div>
-            <div class="dropdown-content" id="bookingsDropdown">
-                <table>
-                    <tr>
-                        <th>Package Name</th>
-                        <th>Date</th>
-                        <th>Time</th>
-                        <th>Amount to Pay</th>
-                        <th>Status</th>
-                        <!--<th>Nurse Name</th>-->
-                        <th>Actions</th>
-                    </tr>
-                    <%
-                        try (Connection conn = DriverManager.getConnection("jdbc:derby://localhost:1527/SeniorCareDB", "app", "app")) {
-                            String queryBookings = "SELECT b.Booking_ID, p.Package_Name, b.Booking_Date, b.Booking_Time, p.Package_Price AS Amount_To_Pay, b.status, e.emp_Name " +
-                                                   "FROM Booking b " +
-                                                   "JOIN Package p ON b.Package_ID = p.Package_ID " +
-                                                   "LEFT JOIN Employee e ON p.emp_id = e.emp_ID " +
-                                                   "WHERE b.Patient_ID = ?";
+       <!-- Your Bookings -->
+<div class="dropdown">
+    <div class="dropdown-header" onclick="toggleDropdown('bookingsDropdown')">
+        Your Bookings
+        <span>&#9660;</span>
+    </div>
+    <div class="dropdown-content" id="bookingsDropdown">
+        <table>
+            <tr>
+                <th>Package Name</th>
+                <th>Date</th>
+                <th>Time</th>
+                <th>Status</th>
+                <!--<th>Nurse Name</th>-->
+                <th>Actions</th>
+            </tr>
+            <%
+                try (Connection conn = DriverManager.getConnection("jdbc:derby://localhost:1527/SeniorCareDB", "app", "app")) {
+                    String queryBookings = "SELECT b.Booking_ID, p.Package_Name, b.Booking_Date, b.Booking_Time, b.status " +
+                                           "FROM Booking b " +
+                                           "JOIN Package p ON b.Package_ID = p.Package_ID " +
+                                           "WHERE b.Patient_ID = ?";
 
-                            try (PreparedStatement stmtBooking = conn.prepareStatement(queryBookings)) {
-                                stmtBooking.setInt(1, patientID);
-                                ResultSet rsBooking = stmtBooking.executeQuery();
+                    try (PreparedStatement stmtBooking = conn.prepareStatement(queryBookings)) {
+                        stmtBooking.setInt(1, patientID);
+                        ResultSet rsBooking = stmtBooking.executeQuery();
 
-                                while (rsBooking.next()) {
-                                    int bookingID = rsBooking.getInt("Booking_ID");
-                    %>
-                    <tr>
-                        <td><%= rsBooking.getString("Package_Name") %></td>
-                        <td><%= rsBooking.getDate("Booking_Date") %></td>
-                        <td><%= rsBooking.getTime("Booking_Time") %></td>
-                        <td><%= rsBooking.getDouble("Amount_To_Pay") %></td>
-                        <td><%= rsBooking.getString("Status") %></td>
-                        <%-- <td><%= rsBooking.getString("emp_Name") != null ? rsBooking.getString("emp_Name") : "No nurse assigned" %></td> --%>
-                        <td>
-                            <form action="EditBookingServlet" method="GET" style="display:inline;">
-                            <input type="hidden" name="bookingID" value="<%= bookingID %>">
-                            <% if (!"Accept".equalsIgnoreCase(rsBooking.getString("Status"))) { %>
-                                <button type="submit" class="btn">Edit</button>
-                            <% } else { %>
-                                <span class="cannot-edit">Cannot edit</span>
-                            <% } %>
-                             </form>
-                                
-                            <% if ("Pending".equals(rsBooking.getString("Status"))) { %>
-                            <form action="CancelBookingServlet" method="POST" style="display:inline;">
-                                <input type="hidden" name="bookingID" value="<%= bookingID %>">
-                                <button type="submit" class="btn logout" onclick="return confirm('Are you sure you want to cancel this booking?');">Cancel</button>
-                            </form>
-                                <% } else { %>
-                                    <span class="cannot-cancel">Cannot cancel</span>
-
-                                <% } %>
-                        </td>
-                    </tr>
-                    <%
-                                }
-                                rsBooking.close();
-                            }
-                        } catch (Exception e) {
-                            out.println("<tr><td colspan='7'>Error: " + e.getMessage() + "</td></tr>");
+                        while (rsBooking.next()) {
+                            int bookingID = rsBooking.getInt("Booking_ID");
+            %>
+            <tr>
+                <td><%= rsBooking.getString("Package_Name") %></td>
+                <td><%= rsBooking.getDate("Booking_Date") %></td>
+                <td><%= rsBooking.getTime("Booking_Time") %></td>
+                <td><%= rsBooking.getString("Status") %></td>
+                <%-- <td><%= rsBooking.getString("emp_Name") != null ? rsBooking.getString("emp_Name") : "No nurse assigned" %></td> --%>
+                <td>
+                    <form action="EditBookingServlet" method="GET" style="display:inline;">
+                        <input type="hidden" name="bookingID" value="<%= bookingID %>">
+                        <% if (!"Accept".equalsIgnoreCase(rsBooking.getString("Status"))) { %>
+                            <button type="submit" class="btn">Edit</button>
+                        <% } else { %>
+                            <span class="cannot-edit">Cannot edit</span>
+                        <% } %>
+                    </form>
+                    
+                    <% if ("Pending".equals(rsBooking.getString("Status"))) { %>
+                    <form action="CancelBookingServlet" method="POST" style="display:inline;">
+                        <input type="hidden" name="bookingID" value="<%= bookingID %>">
+                        <button type="submit" class="btn logout" onclick="return confirm('Are you sure you want to cancel this booking?');">Cancel</button>
+                    </form>
+                        <% } else { %>
+                            <span class="cannot-cancel">Cannot cancel</span>
+                        <% } %>
+                </td>
+            </tr>
+            <%
                         }
-                    %>
-                </table>
-            </div>
-        </div>
+                        rsBooking.close();
+                    }
+                } catch (Exception e) {
+                    out.println("<tr><td colspan='6'>Error: " + e.getMessage() + "</td></tr>");
+                }
+            %>
+        </table>
+    </div>
+</div>
+
     </div>
 
     <script>

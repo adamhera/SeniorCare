@@ -1,10 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
-
 /**
  *
  * @author adamh
@@ -117,13 +110,6 @@ import javax.servlet.http.HttpSession;
 @WebServlet("/EditPatientInfoServlet")
 public class EditPatientInfoServlet extends HttpServlet {
 
-    @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        request.getRequestDispatcher("editPatientinfo.jsp").forward(request, response);
-    }
-
-    @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         HttpSession session = request.getSession();
@@ -168,6 +154,12 @@ public class EditPatientInfoServlet extends HttpServlet {
             request.setAttribute("errorMessage", "Failed to update information. Please try again.");
             request.getRequestDispatcher("editPatientinfo.jsp").forward(request, response);
         }
+    }
+    
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        request.getRequestDispatcher("editPatientinfo.jsp").forward(request, response);
     }
 }
 

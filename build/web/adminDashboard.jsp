@@ -242,9 +242,8 @@
             <th>Action</th>
         </tr>
         <%
-            String queryPackages = "SELECT p.Package_ID, p.Package_Name, p.Package_Description, p.Package_Price, e.emp_Name " +
-                                   "FROM Package p " +
-                                   "LEFT JOIN Employee e ON p.emp_id = e.emp_ID";
+            String queryPackages = "SELECT p.Package_ID, p.Package_Name, p.Package_Description, p.Package_Price " +
+            "FROM Package p";
             PreparedStatement stmtPackages = conn.prepareStatement(queryPackages);
             ResultSet rsPackages = stmtPackages.executeQuery();
 

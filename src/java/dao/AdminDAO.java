@@ -18,7 +18,7 @@ import java.sql.SQLException;
 
 public class AdminDAO {
 
-   // Method to update admin certification
+   // guna
     public boolean updateAdminCertification(int empID, String adminCertification) {
         String query = "UPDATE Admin SET admin_certification = ? WHERE emp_id = ?";
 
@@ -35,7 +35,7 @@ public class AdminDAO {
         }
     }
 
-    // Method to update admin password
+    // guna
     public boolean updateAdminPassword(int empID, String newPassword) {
         String query = "UPDATE Employee SET emp_password = ? WHERE emp_id = ?";
 
@@ -51,7 +51,8 @@ public class AdminDAO {
             return false;
         }
     }
-    
+     
+    ///guna
      public String getAdminCertification(int empID) {
         String query = "SELECT admin_certification FROM Admin WHERE emp_id = ?";
         try (Connection conn = DBConnection.createConnection();

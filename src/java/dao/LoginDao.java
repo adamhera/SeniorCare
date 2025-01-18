@@ -19,7 +19,8 @@ import java.sql.SQLException;
 import util.DBConnection;
 
 public class LoginDao {
-
+    
+    //guna
     public int authenticatePatient(LoginBean loginBean) {
         int patientID = -1;
 
@@ -38,7 +39,7 @@ public class LoginDao {
         }
         return patientID; // Returns -1 if authentication fails
     }
-
+    
     public String getPatientFirstName(int patientID) {
         String firstName = null;
 
