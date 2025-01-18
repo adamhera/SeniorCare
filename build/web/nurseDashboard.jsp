@@ -4,6 +4,10 @@
     Author     : adamh
 --%>
 
+<%@page import="java.sql.ResultSet"%>
+<%@page import="java.sql.PreparedStatement"%>
+<%@page import="java.sql.Connection"%>
+<%@page import="util.DBConnection"%>
 <%@page import="com.seniorcare.model.NurseInfo"%>
 <%@page import="java.util.List"%>
 <%@page import="com.seniorcare.model.Booking"%>
@@ -188,6 +192,61 @@
         <% } else { %>
             <p>No package selected. Please select a package in the <a href="editNurseInfo.jsp">Edit My Information</a> page.</p>
         <% } %>
+        
+        <hr>
+        
+        <!-- Section for Accepted Bookings -->
+        <h3>Accepted Bookings</h3>
+        <table>
+            <tr>
+                <th>Booking ID</th>
+                <th>Patient Name</th>
+                <th>Package</th>
+                <th>Booking Date</th>
+                <th>Booking Time</th>
+            </tr>
+            <%
+                // Ensure we use the logged-in nurse's emp_id to filter bookings
+                String queryAcceptedBookings = 
+                    "SELECT b.Booking_ID, " +
+                    "p.Patient_FName, p.Patient_LName, pk.Package_Name, " +
+                    "b.Booking_Date, b.Booking_Time " +
+                    "FROM Booking b " +
+                    "LEFT JOIN Patient p ON b.Patient_ID = p.Patient_ID " +
+                    "LEFT JOIN Package pk ON b.Package_ID = pk.Package_ID " +
+                    "WHERE b.Status = 'Accept' AND b.emp_id = ?";
+
+                try (Connection conn = DBConnection.createConnection();
+                     PreparedStatement stmtAcceptedBookings = conn.prepareStatement(queryAcceptedBookings)) {
+
+                    // Set the emp_id for the current nurse
+                    stmtAcceptedBookings.setInt(1, empId); // Use the empId from the session
+                    ResultSet rsAcceptedBookings = stmtAcceptedBookings.executeQuery();
+
+                    // Iterate through the result set and display accepted bookings
+                    while (rsAcceptedBookings.next()) {
+            %>
+            <tr>
+                <td><%= rsAcceptedBookings.getInt("Booking_ID") %></td>
+                <td><%= (rsAcceptedBookings.getString("Patient_FName") != null ? rsAcceptedBookings.getString("Patient_FName") : "") + 
+                         " " + (rsAcceptedBookings.getString("Patient_LName") != null ? rsAcceptedBookings.getString("Patient_LName") : "") %></td>
+                <td><%= rsAcceptedBookings.getString("Package_Name") != null ? rsAcceptedBookings.getString("Package_Name") : "N/A" %></td>
+                <td><%= rsAcceptedBookings.getDate("Booking_Date") %></td>
+                <td><%= rsAcceptedBookings.getTime("Booking_Time") %></td>
+            </tr>
+            <%
+                    }
+                    rsAcceptedBookings.close();
+                } catch (Exception e) {
+                    e.printStackTrace();
+            %>
+            <tr>
+                <td colspan="5">Error fetching accepted bookings. Please try again later.</td>
+            </tr>
+            <%
+                }
+            %>
+        </table>
 
         <!-- Logout button -->
         <form action="LogoutServlet" method="POST" class="logout-btn">

@@ -13,25 +13,58 @@ package dao;
 import util.DBConnection;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class AdminDAO {
 
-    // Method to update admin profile
-    public boolean updateAdminProfile(String username, String password) {
-        String query = "UPDATE Admin SET username = ?, password = ? WHERE username = ?";  // Assuming admin is identified by username
+   // Method to update admin certification
+    public boolean updateAdminCertification(int empID, String adminCertification) {
+        String query = "UPDATE Admin SET admin_certification = ? WHERE emp_id = ?";
 
         try (Connection conn = DBConnection.createConnection();
              PreparedStatement stmt = conn.prepareStatement(query)) {
-            stmt.setString(1, username);
-            stmt.setString(2, password);
-            stmt.setString(3, username); // Assuming you want to update the profile of the currently logged-in admin
+            stmt.setString(1, adminCertification);
+            stmt.setInt(2, empID);
 
             int rowsUpdated = stmt.executeUpdate();
-            return rowsUpdated > 0;  // Return true if update was successful
+            return rowsUpdated > 0; // Return true if update was successful
         } catch (SQLException e) {
             e.printStackTrace();
-            return false;  // Return false in case of any exception
+            return false;
         }
+    }
+
+    // Method to update admin password
+    public boolean updateAdminPassword(int empID, String newPassword) {
+        String query = "UPDATE Employee SET emp_password = ? WHERE emp_id = ?";
+
+        try (Connection conn = DBConnection.createConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setString(1, newPassword);
+            stmt.setInt(2, empID);
+
+            int rowsUpdated = stmt.executeUpdate();
+            return rowsUpdated > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+    
+     public String getAdminCertification(int empID) {
+        String query = "SELECT admin_certification FROM Admin WHERE emp_id = ?";
+        try (Connection conn = DBConnection.createConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setInt(1, empID);
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                return rs.getString("admin_certification");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null; // Return null if no certification is found
     }
 }

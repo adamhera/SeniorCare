@@ -19,27 +19,34 @@ import javax.servlet.http.HttpServletResponse;
  */
 @WebServlet("/UpdateAdminProfileServlet")
 public class UpdateAdminProfileServlet extends HttpServlet {
- 
+
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        // Retrieve the form parameters
-        String username = request.getParameter("username");
+        // Retrieve form parameters
+        int empID = (int) request.getSession().getAttribute("emp_id"); // Assuming empID is stored in session
+        String adminCertification = request.getParameter("adminCertification");
         String password = request.getParameter("password");
-        
-        AdminDAO adminDAO = new AdminDAO();
-        // Call the DAO method to update the admin profile
-        boolean isUpdated = adminDAO.updateAdminProfile(username, password);
+        String confirmPassword = request.getParameter("confirmPassword");
 
-        if (isUpdated) {
-            // If update is successful
-            request.setAttribute("successMessage", "Profile updated successfully!");
-        } else {
-            // If update fails
-            request.setAttribute("errorMessage", "Failed to update profile. Please try again.");
+        // Validate passwords
+        if (!password.equals(confirmPassword)) {
+            request.setAttribute("errorMessage", "Passwords do not match!");
+            request.getRequestDispatcher("editAdminInfo.jsp").forward(request, response);
+            return;
         }
 
-        // Forward back to the admin dashboard
+        AdminDAO adminDAO = new AdminDAO();
+        boolean isCertificationUpdated = adminDAO.updateAdminCertification(empID, adminCertification);
+        boolean isPasswordUpdated = adminDAO.updateAdminPassword(empID, password);
+
+        if (isCertificationUpdated && isPasswordUpdated) {
+            request.setAttribute("successMessage", "Admin info updated successfully!");
+        } else {
+            request.setAttribute("errorMessage", "Failed to update admin info. Please try again.");
+        }
+
+        // Redirect back to admin dashboard
         request.getRequestDispatcher("adminDashboard.jsp").forward(request, response);
     }
 }

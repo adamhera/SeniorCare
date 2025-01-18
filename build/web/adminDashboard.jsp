@@ -1,9 +1,10 @@
-<%-- --%>
+<%-- 
+
     Document   : adminDashboard
     Created on : Dec 29, 2024, 9:01:29 PM
     Author     : adamh
-
-
+--%>
+<%@page import="dao.AdminDAO"%>
 <%@ page import="java.sql.ResultSet"%>
 <%@ page import="java.sql.PreparedStatement"%>
 <%@ page import="java.sql.DriverManager"%>
@@ -295,15 +296,31 @@
 
     <hr>
 
-    <!-- Admin Profile Settings -->
-    <h3>Admin Profile Settings</h3>
-    <form action="UpdateAdminProfileServlet" method="POST">
-        <label for="username">Username:</label>
-        <input type="text" id="username" name="username" required><br>
-        <label for="password">Password:</label>
-        <input type="password" id="password" name="password" required><br>
-        <button type="submit">Update Profile</button>
+    <!-- Your Information Section -->
+    <h3>Your Information</h3>
+    <%
+        // Fetch admin's certification from the database using DAO
+        AdminDAO adminDAO = new AdminDAO();
+        int empID = (int) session.getAttribute("emp_id"); // Assuming empID is stored in session after login
+        String certification = adminDAO.getAdminCertification(empID);
+
+        if (certification != null) {
+    %>
+        <p>Certification: <%= certification %></p>
+    <%
+        } else {
+    %>
+        <p>Certification: Not Available</p>
+    <%
+        }
+    %>
+
+    <!-- Button to Edit Admin Info -->
+    <form action="editAdminInfo.jsp" method="GET">
+        <button type="submit" class="btn">Edit Admin Info</button>
     </form>
+
+
     
     <hr>
 
@@ -311,6 +328,12 @@
     <form action="LogoutServlet" method="POST">
         <button type="submit" class="logout-button">Logout</button>
     </form>
+    
+    <!-- Add this button to the admin dashboard -->
+    <form action="deleteEmployee.jsp" method="POST">
+    <button type="submit" class="btn">Delete Rejected Employees</button>
+</form>
+
 
 </body>
 </html>
