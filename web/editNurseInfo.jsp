@@ -29,57 +29,74 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #f7f7f7;
             margin: 0;
             padding: 0;
+            background-color: #f9f5f0; /* Cream background */
+            color: #4a3c2b; /* Rich brown text */
         }
+
         h2 {
-            color: #333;
             text-align: center;
             margin-top: 20px;
+            color: #5c4033; /* Dark brown for headings */
         }
+
         form {
             width: 50%;
-            margin: 20px auto;
-            background-color: #fff;
-            padding: 20px;
+            margin: 30px auto;
+            background-color: #e9e0d8; /* Soft cream background */
+            padding: 20px 30px;
+            border-radius: 10px;
             box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-            border-radius: 8px;
         }
+
         label {
             display: block;
             margin-bottom: 8px;
             font-weight: bold;
-            color: #333;
+            color: #4a3c2b;
         }
+
         input[type="text"], select {
             width: 100%;
-            padding: 8px;
+            padding: 10px;
             margin-bottom: 20px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
+            border: 1px solid #d9d2c6; /* Light brown border */
+            border-radius: 5px;
+            background-color: #f6f0eb; /* Light cream */
+            color: #4a3c2b; /* Dark brown text */
         }
+
+        input[type="text"]::placeholder, select option {
+            color: #8b6a59; /* Soft brown for placeholders */
+        }
+
         button {
-            background-color: #007BFF; /* Matches the button color in nurse dashboard */
+            width: 100%;
+            background-color: #735445; /* Soft brown button */
             color: white;
-            padding: 10px 20px;
+            padding: 12px;
             border: none;
-            border-radius: 4px;
-            cursor: pointer;
+            border-radius: 5px;
             font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
         }
+
         button:hover {
-            background-color: #0056b3; /* Darker shade for hover */
+            background-color: #5c4033; /* Darker brown for hover */
         }
+
         p {
             text-align: center;
             margin-top: 20px;
-            color: #666;
+            color: #5c4033;
         }
+
         .note {
-            font-size: 14px;
-            color: #666;
             text-align: center;
+            font-size: 14px;
+            color: #8b6a59; /* Subtle brown text */
         }
     </style>
 </head>
@@ -88,10 +105,10 @@
 
     <form action="UpdateNurseInfoServlet" method="POST">
         <label for="nurse_certification">Certification:</label>
-        <input type="text" name="nurse_certification" value="<%= nurseInfo.getNurseCertification() %>" required>
+        <input type="text" name="nurse_certification" value="<%= nurseInfo.getNurseCertification() %>" placeholder="Enter your certification" required>
 
         <label for="nurse_shift">Shift:</label>
-        <input type="text" name="nurse_shift" value="<%= nurseInfo.getNurseShift() %>" required>
+        <input type="text" name="nurse_shift" value="<%= nurseInfo.getNurseShift() %>" placeholder="Enter your shift" required>
 
         <label for="nurse_package">Select Package:</label>
         <select name="nurse_package">

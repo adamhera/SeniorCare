@@ -43,85 +43,100 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Patient Registration</title>
-<style>
-  body {
-    font-family: Arial, sans-serif;
-    background-color: #f9f9f9; /* Light neutral background */
-    margin: 0;
-    padding: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh; /* Full viewport height */
-  }
+    <title>Patient Registration | SeniorCareConnect</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow: hidden; /* Prevent scrolling */
+        }
 
-  .container {
-    max-width: 600px; /* Increased width */
-    width: 90%; /* Responsive design for smaller screens */
-    margin: 0 auto;
-    padding: 30px;
-    background-color: #ffeaa7; /* Soft sunny yellow */
-    border-radius: 10px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* More pronounced shadow */
-    border: 4px solid #ffab91; /* Peachy border */
-  }
+        .background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url("image/login.jpg"); /* Your background image */
+            background-size: cover;
+            background-position: center;
+            filter: blur(8px);
+            z-index: 1; /* Behind the content */
+        }
 
-  h1 {
-    text-align: center;
-    color: #555; /* Medium gray for text */
-    font-size: 1.8em; /* Slightly larger font */
-  }
+        .container {
+            position: relative;
+            max-width: 600px;
+            width: 90%;
+            padding: 30px;
+            background-color: #d8c8b7; /* Soft cream background */
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            border: 4px solid #c1a28b; /* Light brown border */
+            z-index: 2; /* Above the background */
+        }
 
-  form {
-    display: flex;
-    flex-direction: column;
-  }
+        h1 {
+            text-align: center;
+            color: #5c4033; /* Dark brown for heading */
+            font-size: 1.8em;
+        }
 
-  .form-group {
-    margin-bottom: 20px;
-  }
+        form {
+            display: flex;
+            flex-direction: column;
+        }
 
-  label {
-    font-weight: bold;
-    margin-bottom: 5px;
-    color: #ff6f61; /* Warm coral for labels */
-  }
+        .form-group {
+            margin-bottom: 20px;
+        }
 
-  input {
-    padding: 12px;
-    border: 2px solid #ffab91; /* Peachy solid border */
-    border-radius: 6px;
-    font-size: 16px;
-    width: 100%;
-    background-color: #fff3e0; /* Soft creamy background */
-    color: #333; /* Dark text for readability */
-    box-sizing: border-box;
-  }
+        label {
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #4a3c2b; /* Rich brown for labels */
+        }
 
-  input:focus {
-    outline: none;
-    border-color: #ff6f61; /* Coral border on focus */
-    box-shadow: 0 0 8px rgba(255, 111, 97, 0.5); /* Soft glow */
-  }
+        input {
+            padding: 12px;
+            border: 2px solid #c1a28b; /* Soft brown solid border */
+            border-radius: 6px;
+            font-size: 16px;
+            width: 100%;
+            background-color: #fff7e6; /* Very light brown/cream background for input fields */
+            color: #3e2723; /* Darker brown for text */
+            box-sizing: border-box;
+        }
 
-  button {
-    padding: 12px;
-    background-color: #81c784; /* Calm green */
-    color: #fff;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 16px;
-    transition: background-color 0.3s ease;
-  }
+        input:focus {
+            outline: none;
+            border-color: #8e735b; /* Slightly darker brown on focus */
+            box-shadow: 0 0 8px rgba(139, 69, 19, 0.5); /* Soft brown glow */
+        }
 
-  button:hover {
-    background-color: #66bb6a; /* Slightly darker green */
-  }
-</style>
+        button {
+            padding: 12px;
+            background-color: #735445; /* Light brown */
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #c2a68c; /* Slightly darker brown */
+        }
+    </style>
 </head>
 <body>
+    <div class="background"></div>
     <div class="container">
         <h1>Register Patient</h1>
         <form action="RegisterPatientServlet" method="post">

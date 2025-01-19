@@ -2,143 +2,6 @@
     Document   : patientDasboard
     Created on : Jan 6, 2025, 11:23:42 PM
     Author     : adamh
-
-
-<%@page import="java.sql.ResultSet"%>
-<%@page import="java.sql.PreparedStatement"%>
-<%@page import="java.sql.DriverManager"%>
-<%@page import="java.sql.Connection"%>
-<%@page session="true" %>
-<%
-    if (session.getAttribute("patientID") == null) {
-        response.sendRedirect("login.jsp");
-        return;
-    }
-
-    String patientFirstName = (String) session.getAttribute("patientFirstName");
-    int patientID = Integer.parseInt(session.getAttribute("patientID").toString());
-%>
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Patient Dashboard</title>
-</head>
-<body>
-    <h1>Welcome to Senior Care Connect, <%= patientFirstName %>!</h1>
-
-    <h2>Available Packages</h2>
-<table border="1">
-    <tr>
-        <th>Package Name</th>
-        <th>Description</th>
-        <th>Price</th>
-        <th>Action</th>
-    </tr>
-    <%
-        try (Connection conn = DriverManager.getConnection("jdbc:derby://localhost:1527/SeniorCareDB", "app", "app")) {
-            String queryPackages = "SELECT Package_ID, Package_Name, Package_Description, Package_Price FROM Package";
-            try (PreparedStatement stmt = conn.prepareStatement(queryPackages)) {
-                ResultSet rs = stmt.executeQuery();
-                while (rs.next()) {
-    %>
-    <tr>
-        <td><%= rs.getString("Package_Name") %></td>
-        <td><%= rs.getString("Package_Description") %></td>
-        <td><%= rs.getDouble("Package_Price") %></td>
-        <td>
-            <form action="BookingServlet" method="POST">
-                <input type="hidden" name="packageID" value="<%= rs.getInt("Package_ID") %>">
-                <label for="bookingDate">Date:</label>
-                <input type="date" name="bookingDate" required>
-                <label for="bookingTime">Time:</label>
-                <input type="time" name="bookingTime" required>
-                
-                
-                
-                <button type="submit">Book</button>
-            </form>
-        </td>
-    </tr>
-    <%
-                }
-                rs.close();
-            }
-        } catch (Exception e) {
-            out.println("<tr><td colspan='4'>Error: " + e.getMessage() + "</td></tr>");
-        }
-    %>
-</table>
-
-
- <h2>Your Bookings</h2>
-<table border="1">
-    <tr>
-        <th>Package Name</th>
-        <th>Date</th>
-        <th>Time</th>
-        <th>Amount to Pay</th>
-        <th>Status</th>
-        <th>Nurse Name</th> <!-- New Column for Nurse Name -->
-        <th>Actions</th>
-    </tr>
-    <%
-        try (Connection conn = DriverManager.getConnection("jdbc:derby://localhost:1527/SeniorCareDB", "app", "app")) {
-            String queryBookings = "SELECT b.Booking_ID, p.Package_Name, b.Booking_Date, b.Booking_Time, p.Package_Price AS Amount_To_Pay, b.status, e.emp_Name " +
-                                   "FROM Booking b " +
-                                   "JOIN Package p ON b.Package_ID = p.Package_ID " +
-                                   "LEFT JOIN Employee e ON p.emp_id = e.emp_ID " +  // Join with Employee table to get nurse's name
-                                   "WHERE b.Patient_ID = ?";
-
-            try (PreparedStatement stmtBooking = conn.prepareStatement(queryBookings)) {
-                stmtBooking.setInt(1, patientID);
-                ResultSet rsBooking = stmtBooking.executeQuery();
-
-                while (rsBooking.next()) {
-                    int bookingID = rsBooking.getInt("Booking_ID");
-    %>
-    <tr>
-        <td><%= rsBooking.getString("Package_Name") %></td>
-        <td><%= rsBooking.getDate("Booking_Date") %></td>
-        <td><%= rsBooking.getTime("Booking_Time") %></td>
-        <td><%= rsBooking.getDouble("Amount_To_Pay") %></td>
-        <td><%= rsBooking.getString("Status") %></td>
-        <td><%= rsBooking.getString("emp_Name") != null ? rsBooking.getString("emp_Name") : "No nurse assigned" %></td> <!-- Nurse Name -->
-        <td>
-            <form action="EditBookingServlet" method="GET" style="display:inline;">
-                <input type="hidden" name="bookingID" value="<%= bookingID %>">
-                <button type="submit">Edit</button>
-            </form>
-            <form action="CancelBookingServlet" method="POST" style="display:inline;">
-                <input type="hidden" name="bookingID" value="<%= bookingID %>">
-                <button type="submit" onclick="return confirm('Are you sure you want to cancel this booking?');">Cancel</button>
-            </form>
-        </td>
-    </tr>
-    <%
-                }
-                rsBooking.close();
-            }
-        } catch (Exception e) {
-            out.println("<tr><td colspan='5'>Error: " + e.getMessage() + "</td></tr>");
-        }
-    %>
-</table>
-
-
-
-    <h2>Your Information</h2>
-    <!-- Button to navigate to Edit Patient Info -->
-    <form action="EditPatientInfoServlet" method="GET">
-        <button type="submit">Edit My Information</button>
-    </form>
-
-    <!-- Option to log out -->
-    <form action="LogoutServlet" method="POST">
-        <button type="submit">Logout</button>
-    </form>
-</body>
-</html>
-
 --%>
 
 <%@page import="java.sql.ResultSet"%>
@@ -158,252 +21,336 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Patient Dashboard</title>
+    <title>Patient Dashboard | SeniorCareConnect</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f9;
+            font-family: 'Arial', sans-serif;
             margin: 0;
             padding: 0;
+            background-color: #f4ede4; /* Soft brown background */
         }
+
+        /* Navbar Styling */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #8b6a59; /* Soft brown */
+            padding: 10px 20px;
+            color: white;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .navbar h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+
+        .navbar a {
+            color: white;
+            text-decoration: none;
+            margin: 0 15px;
+            padding: 8px 16px;
+            border-radius: 5px;
+        }
+
+        .navbar a:hover {
+            background-color: #735445; /* Darker soft brown */
+        }
+
         .container {
             max-width: 1200px;
             margin: 20px auto;
             padding: 20px;
             background-color: #fff;
             border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
-        header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-        header h1 {
-            margin: 0;
-            color: #333;
-        }
-        header .btn-container {
-            display: flex;
-            gap: 10px;
-        }
-        .btn {
-            padding: 8px 12px;
-            background-color: #007bff;
-            color: #fff;
-            text-decoration: none;
-            border-radius: 4px;
-            cursor: pointer;
-            border: none;
-            font-size: 14px;
-        }
-        .btn:hover {
-            background-color: #0056b3;
-        }
-        .btn.logout {
-            background-color: #dc3545;
-        }
-        .btn.logout:hover {
-            background-color: #c82333;
-        }
-        .dropdown {
-            margin-bottom: 20px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
-        .dropdown-header {
-            padding: 10px;
-            background-color: #f8f8f8;
+
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        header h1 {
+            font-size: 28px;
+            color: #4a3a2a; /* Dark brown text */
+        }
+
+        /* Card Layout for Sections */
+        .section {
+            margin-bottom: 100px;
+        }
+
+        .section h2 {
+            font-size: 24px;
+            color: #8b6a59; /* Soft brown */
+            margin-bottom: 15px;
+        }
+
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .card {
+            background-color: #f9f5f1; /* Light brownish white */
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .card h3 {
+            font-size: 20px;
+            color: #4a3a2a; /* Dark brown text */
+            margin-bottom: 10px;
+        }
+
+        .card p {
+            margin: 5px 0;
+            color: #5e4a3a; /* Medium brown */
+        }
+
+        .card button {
+            display: inline-block;
+            padding: 8px 12px;
+            background-color: #8b6a59; /* Soft brown */
+            color: white;
+            border: none;
+            border-radius: 5px;
             cursor: pointer;
-            font-size: 18px;
+            transition: background-color 0.2s;
+        }
+
+        .card button:hover {
+            background-color: #735445; /* Darker soft brown */
+        }
+
+        .card form {
             display: flex;
-            justify-content: space-between;
-            align-items: center;
+            flex-direction: column;
+            gap: 10px;
         }
-        .dropdown-header:hover {
-            background-color: #eaeaea;
-        }
-        .dropdown-content {
-            display: none;
-            padding: 10px;
-        }
+
         table {
             width: 100%;
             border-collapse: collapse;
-            margin: 20px 0;
-            font-size: 16px;
+            margin-top: 20px;
         }
+
         table th, table td {
-            border: 1px solid #ddd;
-            padding: 12px;
+            width: 100px;
+            padding: 20px;
             text-align: center;
+            border-bottom: 1px solid #ddd;
         }
+
         table th {
-            background-color: #f8f8f8;
-            color: #333;
+            background-color: #8b6a59; /* Soft brown */
+            color: white;
+         
         }
-        
-        .cannot-cancel {
-        color: red; /* Text color */
-        font-weight: bold; /* Bold text */
-        font-size: 14px; /* Font size */
-        background-color: #ffe5e5; /* Light red background */
-        padding: 5px 10px; /* Padding inside the span */
-        border-radius: 5px; /* Rounded corners */
-        border: 1px solid #ffcccc; /* Light red border */
-        display: inline-block; /* Align nicely in a line */
-        text-align: center; /* Center text */
+        table td {
+        align-items: center;
+        gap: 50px; /* Spacing between buttons/forms */
+   
         }
-        
-        .cannot-edit {
+
+        td form {
+            display: inline-block; /* Prevents forms from overflowing */
+        }
+        table tr:hover {
+            background-color: #f1e8e3; /* Very light brown */
+        }
+
+        .btn {
+            padding: 8px 12px;
+            background-color: #8b6a59; /* Soft brown */
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .btn:hover {
+            background-color: #735445; /* Darker soft brown */
+        }
+
+        .btn.cancel {
+            background-color: #c75c5c; /* Soft red */
+        }
+
+        .btn.cancel:hover {
+            background-color: #a94e4e; /* Darker red */
+        }
+
+        @media (max-width: 768px) {
+            .navbar h1 {
+                font-size: 20px;
+            }
+
+            .cards {
+                grid-template-columns: 1fr;
+            }
+        }
+             .cannot-cancel {
+            color: red; /* Text color */
+            font-weight: bold; /* Bold text */
+             }
+            .cannot-edit {
             color: gray; /* Neutral color for disabled messages */
             font-size: 14px; /* Adjust font size */
             font-style: italic; /* Italicize text for distinction */
             padding: 2px 5px; /* Add some padding */
         }
+          footer {
+                margin-top: 20px;
+                text-align: center;
+                padding: 10px;
+                background-color: #6e4a38; /* Matches the footer color from the provided screenshot */
+                color: white;
+                border-radius: 8px;
+            }
     </style>
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>Welcome, <%= patientFirstName %>!</h1>
-            <div class="btn-container">
-                <form action="EditPatientInfoServlet" method="GET">
-                    <button type="submit" class="btn">Edit My Information</button>
-                </form>
-                <form action="LogoutServlet" method="POST">
-                    <button type="submit" class="btn logout">Logout</button>
-                </form>
-            </div>
-        </header>
-
-        <!-- Available Packages -->
-        <div class="dropdown">
-            <div class="dropdown-header" onclick="toggleDropdown('packagesDropdown')">
-                Available Packages
-                <span>&#9660;</span>
-            </div>
-            <div class="dropdown-content" id="packagesDropdown">
-                <table>
-                    <tr>
-                        <th>Package Name</th>
-                        <th>Description</th>
-                        <th>Price</th>
-                        <th>Action</th>
-                    </tr>
-                    <%
-                        try (Connection conn = DriverManager.getConnection("jdbc:derby://localhost:1527/SeniorCareDB", "app", "app")) {
-                            String queryPackages = "SELECT Package_ID, Package_Name, Package_Description, Package_Price FROM Package";
-                            try (PreparedStatement stmt = conn.prepareStatement(queryPackages)) {
-                                ResultSet rs = stmt.executeQuery();
-                                while (rs.next()) {
-                    %>
-                    <tr>
-                        <td><%= rs.getString("Package_Name") %></td>
-                        <td><%= rs.getString("Package_Description") %></td>
-                        <td><%= rs.getDouble("Package_Price") %></td>
-                        <td>
-                            <form action="BookingServlet" method="POST">
-                                <input type="hidden" name="packageID" value="<%= rs.getInt("Package_ID") %>">
-                                <label for="bookingDate">Date:</label>
-                                <input type="date" name="bookingDate" required>
-                                <label for="bookingTime">Time:</label>
-                                <input type="time" name="bookingTime" required>
-                                <button type="submit" class="btn">Book</button>
-                            </form>
-                        </td>
-                    </tr>
-                    <%
-                                }
-                                rs.close();
-                            }
-                        } catch (Exception e) {
-                            out.println("<tr><td colspan='4'>Error: " + e.getMessage() + "</td></tr>");
-                        }
-                    %>
-                </table>
-            </div>
+<div class="navbar">
+    <div style="display: flex; align-items: center;">
+        <!-- Logo with White Background -->
+        <div style="background-color: none; border-radius: 50px; padding: 3px; margin-right: 5px;">
+            <img src="image/logo.png" alt="Logo" style="height: 60px; vertical-align: middle;">
         </div>
-
-       <!-- Your Bookings -->
-<div class="dropdown">
-    <div class="dropdown-header" onclick="toggleDropdown('bookingsDropdown')">
-        Your Bookings
-        <span>&#9660;</span>
+        <h1 style="margin: 0; font-size: 24px; color: white;">Senior Care Connect</h1>
     </div>
-    <div class="dropdown-content" id="bookingsDropdown">
-        <table>
-            <tr>
-                <th>Package Name</th>
-                <th>Date</th>
-                <th>Time</th>
-                <th>Status</th>
-                <!--<th>Nurse Name</th>-->
-                <th>Actions</th>
-            </tr>
-            <%
-                try (Connection conn = DriverManager.getConnection("jdbc:derby://localhost:1527/SeniorCareDB", "app", "app")) {
-                    String queryBookings = "SELECT b.Booking_ID, p.Package_Name, b.Booking_Date, b.Booking_Time, b.status " +
-                                           "FROM Booking b " +
-                                           "JOIN Package p ON b.Package_ID = p.Package_ID " +
-                                           "WHERE b.Patient_ID = ?";
-
-                    try (PreparedStatement stmtBooking = conn.prepareStatement(queryBookings)) {
-                        stmtBooking.setInt(1, patientID);
-                        ResultSet rsBooking = stmtBooking.executeQuery();
-
-                        while (rsBooking.next()) {
-                            int bookingID = rsBooking.getInt("Booking_ID");
-            %>
-            <tr>
-                <td><%= rsBooking.getString("Package_Name") %></td>
-                <td><%= rsBooking.getDate("Booking_Date") %></td>
-                <td><%= rsBooking.getTime("Booking_Time") %></td>
-                <td><%= rsBooking.getString("Status") %></td>
-                <%-- <td><%= rsBooking.getString("emp_Name") != null ? rsBooking.getString("emp_Name") : "No nurse assigned" %></td> --%>
-                <td>
-                    <form action="EditBookingServlet" method="GET" style="display:inline;">
-                        <input type="hidden" name="bookingID" value="<%= bookingID %>">
-                        <% if (!"Accept".equalsIgnoreCase(rsBooking.getString("Status"))) { %>
-                            <button type="submit" class="btn">Edit</button>
-                        <% } else { %>
-                            <span class="cannot-edit">Cannot edit</span>
-                        <% } %>
-                    </form>
-                    
-                    <% if ("Pending".equals(rsBooking.getString("Status"))) { %>
-                    <form action="CancelBookingServlet" method="POST" style="display:inline;">
-                        <input type="hidden" name="bookingID" value="<%= bookingID %>">
-                        <button type="submit" class="btn logout" onclick="return confirm('Are you sure you want to cancel this booking?');">Cancel</button>
-                    </form>
-                        <% } else { %>
-                            <span class="cannot-cancel">Cannot cancel</span>
-                        <% } %>
-                </td>
-            </tr>
-            <%
-                        }
-                        rsBooking.close();
-                    }
-                } catch (Exception e) {
-                    out.println("<tr><td colspan='6'>Error: " + e.getMessage() + "</td></tr>");
-                }
-            %>
-        </table>
+    <div>
+        <a href="patientHome.jsp">Home</a>
+        <a href="patientDasboard.jsp">Booking</a>
+                <form action="EditPatientInfoServlet" method="GET" style="display: inline;">
+            <button type="submit" class="btn" style="background: none; border: none; color: white; cursor: pointer;">Edit My Information</button>
+        </form>
+        <a href="home.jsp">Logout</a>
     </div>
 </div>
 
+    <div class="container">
+        <!-- Welcome Header -->
+        <header>
+            <h1>Welcome to Senior Care Connect, <%= patientFirstName %>!</h1>
+        </header>
+
+        <!-- Available Packages Section -->
+        <div class="section">
+            <h2>Available Packages</h2>
+            <div class="cards">
+                <%
+                    try (Connection conn = DriverManager.getConnection("jdbc:derby://localhost:1527/SeniorCareDB", "app", "app")) {
+                        String queryPackages = "SELECT Package_ID, Package_Name, Package_Description, Package_Price FROM Package";
+                        try (PreparedStatement stmt = conn.prepareStatement(queryPackages)) {
+                            ResultSet rs = stmt.executeQuery();
+                            while (rs.next()) {
+                %>
+                <div class="card">
+                    <h3><%= rs.getString("Package_Name") %></h3>
+                    <p><%= rs.getString("Package_Description") %></p>
+                    <p>Price: $<%= rs.getDouble("Package_Price") %></p>
+                    <form action="BookingServlet" method="POST">
+                        <input type="hidden" name="packageID" value="<%= rs.getInt("Package_ID") %>">
+                        <label for="bookingDate">Date:</label>
+                        <input type="date" name="bookingDate" required>
+                        <label for="bookingTime">Time:</label>
+                        <input type="time" name="bookingTime" required>
+                        <button type="submit">Book Now</button>
+                    </form>
+                </div>
+                <%
+                            }
+                            rs.close();
+                        }
+                    } catch (Exception e) {
+                        out.println("<p>Error: " + e.getMessage() + "</p>");
+                    }
+                %>
+            </div>
+        </div>
+
+        <!-- Your Bookings Section -->
+        <div class="section">
+            <h2>Your Bookings</h2>
+            <table>
+                <tr>
+                    <th>Package Name</th>
+                    <th>Date</th>
+                    <th>Time</th>
+                    <th>Amount to Pay</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+                <%
+                    try (Connection conn = DriverManager.getConnection("jdbc:derby://localhost:1527/SeniorCareDB", "app", "app")) {
+                        String queryBookings = "SELECT b.Booking_ID, p.Package_Name, b.Booking_Date, b.Booking_Time, p.Package_Price AS Amount_To_Pay, b.status FROM Booking b JOIN Package p ON b.Package_ID = p.Package_ID WHERE b.Patient_ID = ?";
+                        try (PreparedStatement stmtBooking = conn.prepareStatement(queryBookings)) {
+                            stmtBooking.setInt(1, patientID);
+                            ResultSet rsBooking = stmtBooking.executeQuery();
+                            while (rsBooking.next()) {
+                                int bookingID = rsBooking.getInt("Booking_ID");
+                %>
+                <tr>
+                    <td><%= rsBooking.getString("Package_Name") %></td>
+                    <td><%= rsBooking.getDate("Booking_Date") %></td>
+                    <td><%= rsBooking.getTime("Booking_Time") %></td>
+                    <td>$<%= rsBooking.getDouble("Amount_To_Pay") %></td>
+                    <td><%= rsBooking.getString("Status") %></td>
+                    <td>
+              
+                            <form action="EditBookingServlet" method="GET" style="display:inline;">
+                            <input type="hidden" name="bookingID" value="<%= bookingID %>">
+                            <% if (!"Accept".equalsIgnoreCase(rsBooking.getString("Status"))) { %>
+                                <button type="submit" class="btn">Edit</button>
+                            <% } else { %>
+                                <span class="cannot-edit">Cannot edit</span>
+                            <% } %>
+                             </form>
+                             
+                            <% if ("Pending".equals(rsBooking.getString("Status"))) { %>
+                            <form action="CancelBookingServlet" method="POST" style="display:inline;">
+                                <input type="hidden" name="bookingID" value="<%= bookingID %>">
+                                <button type="submit" class="btn logout" onclick="return confirm('Are you sure you want to cancel this booking?');">Cancel</button>
+                            </form>
+                                <% } else { %>
+                                    <span class="cannot-cancel">Cannot cancel</span>
+                                <% } %>
+                        </td>
+                
+                </tr>
+                <%
+                            }
+                            rsBooking.close();
+                        }
+                    } catch (Exception e) {
+                        out.println("<p>Error: " + e.getMessage() + "</p>");
+                    }
+                %>
+            </table>
+        </div>
     </div>
 
-    <script>
+
+            <script>
         function toggleDropdown(dropdownId) {
             const content = document.getElementById(dropdownId);
             content.style.display = content.style.display === "block" ? "none" : "block";
         }
     </script>
+    <footer>
+    <p>&copy; 2025 Senior Care Connect</p>
+</footer>
 </body>
 </html>
-
-

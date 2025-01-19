@@ -3,7 +3,7 @@
     Created on : Jan 18, 2025, 11:42:11 AM
     Author     : adamh
 --%>
-
+<%@ page contentType="text/html" pageEncoding="UTF-8" %>
 <%@page import="java.sql.*"%>
 <%@page import="util.DBConnection"%>
 <%@page session="true" %>
@@ -29,30 +29,40 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #f9f9f9;
+            background-color: #f1e8e3; /* Very light brown */
+            margin: 0;
+            padding: 20px;
         }
         h2 {
-            color: #2c3e50;
+            color: #735445; /* Darker soft brown */
+        }
+        p {
+            color: #8b6a59; /* Soft brown */
         }
         table {
             width: 100%;
             border-collapse: collapse;
             margin-top: 20px;
+            background-color: #ffffff;
         }
         table th, table td {
             padding: 10px;
             text-align: left;
-            border: 1px solid #ddd;
+            border: 1px solid #8b6a59; /* Soft brown */
         }
         table th {
-            background-color: #3498db;
+            background-color: #735445; /* Darker soft brown */
             color: white;
         }
         table tr:nth-child(even) {
-            background-color: #f2f2f2;
+            background-color: #f1e8e3; /* Very light brown */
+        }
+        table tr:hover {
+            background-color: #8b6a59; /* Soft brown */
+            color: white;
         }
         .btn {
-            background-color: #e74c3c;
+            background-color: red; /* Soft brown */
             color: white;
             padding: 8px 12px;
             border: none;
@@ -60,7 +70,7 @@
             cursor: pointer;
         }
         .btn:hover {
-            background-color: #c0392b;
+            background-color: red; /* Darker soft brown */
         }
     </style>
 </head>

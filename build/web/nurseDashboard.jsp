@@ -35,223 +35,255 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Nurse Dashboard</title>
+    <title>Nurse Dashboard | SeniorCareConnect</title>
     <style>
+        /* Global Styles */
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Arial', sans-serif;
             margin: 0;
             padding: 0;
-            background-color: #f9f9f9;
-            color: #333;
+            background-color: #f4f0eb; /* Light cream */
+            color: #4a3c2b; /* Rich brown */
         }
 
-        h2, h3 {
-            color: #2c3e50;
+        h1, h2, h3 {
+            margin: 0;
         }
 
         a {
-            color: #3498db;
             text-decoration: none;
+            color: inherit;
         }
 
-        a:hover {
-            text-decoration: underline;
-        }
-
-        header {
-            background-color: #2c3e50;
-            color: #fff;
-            padding: 10px 20px;
+        /* Layout */
+        .dashboard {
             display: flex;
-            justify-content: space-between;
-            align-items: center;
+            min-height: 100vh;
         }
 
-        header a {
-            color: #fff;
-            font-size: 14px;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 20px auto;
-            background: #fff;
+        .sidebar {
+            width: 240px;
+            background-color: #6e4a38; /* Deep brown */
+            color: white;
             padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
         }
 
-        .info {
+        .sidebar h1 {
+            margin-bottom: 30px;
+            font-size: 22px;
+        }
+
+        .sidebar a {
             margin-bottom: 20px;
-            padding: 10px;
-            background-color: #ecf0f1;
-            border-left: 4px solid #3498db;
-        }
-
-        .btn {
-            background-color: #3498db;
-            color: #fff;
-            border: none;
             padding: 10px 15px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 14px;
+            border-radius: 5px;
+            color: white;
+            font-size: 16px;
+            transition: background-color 0.3s;
         }
 
-        .btn:hover {
-            background-color: #2980b9;
+        .sidebar a:hover {
+            background-color: #563626; /* Slightly darker brown */
         }
 
+        .main-content {
+            flex: 1;
+            padding: 30px;
+        }
+
+        .card {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .card h3 {
+            margin-bottom: 15px;
+            color: #5c4033;
+        }
+
+        /* Tables */
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 20px;
+            margin-top: 15px;
         }
 
         table th, table td {
-            padding: 10px;
+            padding: 10px 15px;
             text-align: left;
             border: 1px solid #ddd;
         }
 
         table th {
-            background-color: #3498db;
+            background-color: #6e4a38; /* Deep brown */
             color: white;
         }
 
         table tr:nth-child(even) {
-            background-color: #f2f2f2;
+            background-color: #f9f5f0;
         }
 
-        .actions button {
-            margin-right: 5px;
+        table tr:hover {
+            background-color: #f5e7de; /* Light beige */
         }
 
-        .logout-btn {
+        /* Buttons */
+        .btn {
             display: inline-block;
+            background-color: #735445; /* Medium brown */
+            color: white;
+            padding: 8px 15px;
+            margin-top: 10px;
+            border-radius: 5px;
+            text-align: center;
+            cursor: pointer;
+            text-decoration: none;
+            transition: background-color 0.3s;
+        }
+
+        .btn:hover {
+            background-color: #5c4033;
+        }
+
+        .btn-danger {
+            background-color: #e74c3c;
+        }
+
+        .btn-danger:hover {
+            background-color: #c0392b;
+        }
+
+        footer {
             margin-top: 20px;
+            text-align: center;
+            padding: 10px;
+            background-color: #6e4a38;
+            color: white;
+            border-radius: 8px;
         }
     </style>
 </head>
 <body>
-    <header>
-        <h2>Nurse Dashboard</h2>
-        <a href="LogoutServlet">Logout</a>
-    </header>
-
-    <div class="container">
-        <!-- Nurse Details Section -->
-        <h3>Your Information</h3>
-        <div class="info">
-            <p><strong>Certification:</strong> <%= nurseInfo != null ? nurseInfo.getNurseCertification() : "Not Available" %></p>
-            <p><strong>Shift:</strong> <%= nurseInfo != null ? nurseInfo.getNurseShift() : "Not Available" %></p>
-            <p><strong>Selected Package:</strong>
-                <%= nurseInfo.getNursePackage() != null && !nurseInfo.getNursePackage().isEmpty() ? nurseInfo.getNursePackage() : "No enrolled package" %>
-            </p>
+    <div class="dashboard">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <h1>Senior Care Connect</h1>
+            <a href="nurseHome.jsp">Home</a>
+            <a href="nurseDashboard.jsp">Work</a>
+            
+            <form action="LogoutServlet" method="POST">
+                <button class="btn" style="width: 100%; margin-top: auto;">Logout</button>
+            </form>
         </div>
 
-        <a href="editNurseInfo.jsp">
-            <button class="btn">Edit My Information</button>
-        </a>
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Nurse Information -->
+            <div class="card">
+                <h3>Your Information</h3>
+                <p><strong>Certification:</strong> <%= nurseInfo != null ? nurseInfo.getNurseCertification() : "Not Available" %></p>
+                <p><strong>Shift:</strong> <%= nurseInfo != null ? nurseInfo.getNurseShift() : "Not Available" %></p>
+                <p><strong>Selected Package:</strong>
+                    <%= selectedPackage != null && !selectedPackage.isEmpty() ? selectedPackage : "No enrolled package" %>
+                </p>
+                <a href="editNurseInfo.jsp" class="btn">Edit My Information</a>
+            </div>
 
-        <!-- Pending Bookings Section (if nurse has a selected package) -->
-        <% if (selectedPackage != null && !selectedPackage.isEmpty()) { %>
-            <h3>List of Pending Bookings</h3>
-            <table>
-                <tr>
-                    <th>Booking ID</th>
-                    <th>Patient Name</th>
-                    <th>Package Name</th>
-                    <th>Booking Date</th>
-                    <th>Booking Time</th>
-                    <th>Action</th>
-                </tr>
-                <% 
-                    BookingDAO bookingDao = new BookingDAO();
-                    List<Booking> bookings = bookingDao.getPendingBookingsByPackage(selectedPackage);
-                    for (Booking booking : bookings) {
-                %>
-                <tr>
-                    <td><%= booking.getBookingId() %></td>
-                    <td><%= booking.getPatientName() %></td>
-                    <td><%= booking.getPackageName() %></td>
-                    <td><%= booking.getBookingDate() %></td>
-                    <td><%= booking.getBookingTime() %></td>
-                    <td class="actions">
-                        <form action="UpdateBookingStatusServlet" method="POST" style="display:inline;">
-                            <input type="hidden" name="bookingID" value="<%= booking.getBookingId() %>">
-                            <button class="btn" type="submit" name="action" value="Accept">Accept</button>
-                            <button class="btn" type="submit" name="action" value="Reject" style="background-color: #e74c3c;">Reject</button>
-                        </form>
-                    </td>
-                </tr>
-                <% 
-                    }
-                %>
-            </table>
-        <% } else { %>
-            <p>No package selected. Please select a package in the <a href="editNurseInfo.jsp">Edit My Information</a> page.</p>
-        <% } %>
-        
-        <hr>
-        
-        <!-- Section for Accepted Bookings -->
-        <h3>Accepted Bookings</h3>
-        <table>
-            <tr>
-                <th>Booking ID</th>
-                <th>Patient Name</th>
-                <th>Package</th>
-                <th>Booking Date</th>
-                <th>Booking Time</th>
-            </tr>
-            <%
-                // Ensure we use the logged-in nurse's emp_id to filter bookings
-                String queryAcceptedBookings = 
-                    "SELECT b.Booking_ID, " +
-                    "p.Patient_FName, p.Patient_LName, pk.Package_Name, " +
-                    "b.Booking_Date, b.Booking_Time " +
-                    "FROM Booking b " +
-                    "LEFT JOIN Patient p ON b.Patient_ID = p.Patient_ID " +
-                    "LEFT JOIN Package pk ON b.Package_ID = pk.Package_ID " +
-                    "WHERE b.Status = 'Accept' AND b.emp_id = ?";
+            <!-- Pending Bookings -->
+            <% if (selectedPackage != null && !selectedPackage.isEmpty()) { %>
+            <div class="card">
+                <h3>Pending Bookings</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Booking ID</th>
+                            <th>Patient Name</th>
+                            <th>Package</th>
+                            <th>Booking Date</th>
+                            <th>Booking Time</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% 
+                            BookingDAO bookingDao = new BookingDAO();
+                            List<Booking> bookings = bookingDao.getPendingBookingsByPackage(selectedPackage);
+                            for (Booking booking : bookings) {
+                        %>
+                        <tr>
+                            <td><%= booking.getBookingId() %></td>
+                            <td><%= booking.getPatientName() %></td>
+                            <td><%= booking.getPackageName() %></td>
+                            <td><%= booking.getBookingDate() %></td>
+                            <td><%= booking.getBookingTime() %></td>
+                            <td>
+                                <form action="UpdateBookingStatusServlet" method="POST" style="display:inline;">
+                                    <input type="hidden" name="bookingID" value="<%= booking.getBookingId() %>">
+                                    <button class="btn" name="action" value="Accept">Accept</button>
+                                    <button class="btn btn-danger" name="action" value="Reject">Reject</button>
+                                </form>
+                            </td>
+                        </tr>
+                        <% } %>
+                    </tbody>
+                </table>
+            </div>
+            <% } else { %>
+            <div class="card">
+                <h3>Pending Bookings</h3>
+                <p>No package selected. Please update your information on the <a href="editNurseInfo.jsp">Edit My Information</a> page.</p>
+            </div>
+            <% } %>
 
-                try (Connection conn = DBConnection.createConnection();
-                     PreparedStatement stmtAcceptedBookings = conn.prepareStatement(queryAcceptedBookings)) {
-
-                    // Set the emp_id for the current nurse
-                    stmtAcceptedBookings.setInt(1, empId); // Use the empId from the session
-                    ResultSet rsAcceptedBookings = stmtAcceptedBookings.executeQuery();
-
-                    // Iterate through the result set and display accepted bookings
-                    while (rsAcceptedBookings.next()) {
-            %>
-            <tr>
-                <td><%= rsAcceptedBookings.getInt("Booking_ID") %></td>
-                <td><%= (rsAcceptedBookings.getString("Patient_FName") != null ? rsAcceptedBookings.getString("Patient_FName") : "") + 
-                         " " + (rsAcceptedBookings.getString("Patient_LName") != null ? rsAcceptedBookings.getString("Patient_LName") : "") %></td>
-                <td><%= rsAcceptedBookings.getString("Package_Name") != null ? rsAcceptedBookings.getString("Package_Name") : "N/A" %></td>
-                <td><%= rsAcceptedBookings.getDate("Booking_Date") %></td>
-                <td><%= rsAcceptedBookings.getTime("Booking_Time") %></td>
-            </tr>
-            <%
-                    }
-                    rsAcceptedBookings.close();
-                } catch (Exception e) {
-                    e.printStackTrace();
-            %>
-            <tr>
-                <td colspan="5">Error fetching accepted bookings. Please try again later.</td>
-            </tr>
-            <%
-                }
-            %>
-        </table>
-
-        <!-- Logout button -->
-        <form action="LogoutServlet" method="POST" class="logout-btn">
-            <button class="btn" type="submit">Logout</button>
-        </form>
+            <!-- Accepted Bookings -->
+            <div class="card">
+                <h3>Accepted Bookings</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Booking ID</th>
+                            <th>Patient Name</th>
+                            <th>Package</th>
+                            <th>Booking Date</th>
+                            <th>Booking Time</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% 
+                            String queryAcceptedBookings = "SELECT b.Booking_ID, p.Patient_FName, p.Patient_LName, pk.Package_Name, b.Booking_Date, b.Booking_Time FROM Booking b LEFT JOIN Patient p ON b.Patient_ID = p.Patient_ID LEFT JOIN Package pk ON b.Package_ID = pk.Package_ID WHERE b.Status = 'Accept' AND b.emp_id = ?";
+                            try (Connection conn = DBConnection.createConnection();
+                                 PreparedStatement stmt = conn.prepareStatement(queryAcceptedBookings)) {
+                                stmt.setInt(1, empId);
+                                ResultSet rs = stmt.executeQuery();
+                                while (rs.next()) {
+                        %>
+                        <tr>
+                            <td><%= rs.getInt("Booking_ID") %></td>
+                            <td><%= rs.getString("Patient_FName") + " " + rs.getString("Patient_LName") %></td>
+                            <td><%= rs.getString("Package_Name") %></td>
+                            <td><%= rs.getDate("Booking_Date") %></td>
+                            <td><%= rs.getTime("Booking_Time") %></td>
+                        </tr>
+                        <% }
+                            } catch (Exception e) { %>
+                        <tr>
+                            <td colspan="5">Error fetching data.</td>
+                        </tr>
+                        <% } %>
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
+
+    <footer>
+        ? 2025 Senior Care Connect. All Rights Reserved.
+    </footer>
 </body>
 </html>

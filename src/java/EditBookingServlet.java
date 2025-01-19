@@ -170,6 +170,8 @@ public class EditBookingServlet extends HttpServlet {
                 break;
             case "Package C":
                 packageID = 4;
+            case "Package D":
+                packageID = 5;
                 break;
         }
 
