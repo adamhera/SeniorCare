@@ -39,7 +39,7 @@ public class LogoutServlet extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-    // Fetch the current HTTP session
+    
         HttpSession session = request.getSession(false);
 
         // Check if session is not null

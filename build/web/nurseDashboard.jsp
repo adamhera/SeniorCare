@@ -35,6 +35,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <title>Nurse Dashboard | SeniorCareConnect</title>
     <style>
         /* Global Styles */
@@ -226,7 +227,7 @@
                                 <form action="UpdateBookingStatusServlet" method="POST" style="display:inline;">
                                     <input type="hidden" name="bookingID" value="<%= booking.getBookingId() %>">
                                     <button class="btn" name="action" value="Accept">Accept</button>
-                                    <button class="btn btn-danger" name="action" value="Reject">Reject</button>
+                                    <%--<button class="btn btn-danger" name="action" value="Reject">Reject</button>--%>
                                 </form>
                             </td>
                         </tr>
@@ -279,6 +280,127 @@
                     </tbody>
                 </table>
             </div>
+                    
+                    <!-- Accepted Bookings Chart -->
+<div class="card">
+    <h3>Accepted Bookings Chart</h3>
+    <canvas id="acceptedBookingsChart" width="400" height="200"></canvas>
+</div>
+<%
+    // Query to get the count of accepted bookings per package for this nurse
+    String queryBookingCount = "SELECT pk.Package_Name, COUNT(b.Booking_ID) AS BookingCount " +
+                               "FROM Booking b " +
+                               "JOIN Package pk ON b.Package_ID = pk.Package_ID " +
+                               "WHERE b.Status = 'Accept' AND b.emp_id = ? " +
+                               "GROUP BY pk.Package_Name " +
+                               "ORDER BY BookingCount DESC";
+    StringBuilder packageNames = new StringBuilder();
+    StringBuilder bookingCounts = new StringBuilder();
+    boolean isFirst = true;
+
+    try (Connection conn = DBConnection.createConnection();
+         PreparedStatement stmt = conn.prepareStatement(queryBookingCount)) {
+        stmt.setInt(1, empId);
+        ResultSet rs = stmt.executeQuery();
+
+        while (rs.next()) {
+            if (!isFirst) {
+                packageNames.append(", ");
+                bookingCounts.append(", ");
+            }
+            packageNames.append("'").append(rs.getString("Package_Name")).append("'");
+            bookingCounts.append(rs.getInt("BookingCount"));
+            isFirst = false;
+        }
+
+        rs.close();
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+%>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const ctx = document.getElementById('acceptedBookingsChart').getContext('2d');
+
+        // Use the Java variables safely within JavaScript
+        const packageNames = [<%= packageNames.toString() %>];
+        const bookingCounts = [<%= bookingCounts.toString() %>];
+
+        // Define an array of colors for each package
+        const packageColors = [
+            'rgba(54, 162, 235, 0.7)', // Blue
+            'rgba(255, 99, 132, 0.7)', // Red
+            'rgba(75, 192, 192, 0.7)', // Green
+            'rgba(153, 102, 255, 0.7)' // Purple
+        ];
+
+        const colors = packageNames.map((pkg, index) => {
+            switch(pkg) {
+                case "Basic Package":
+                    return 'rgba(54, 162, 235, 0.7)';
+                case "Package A":
+                    return 'rgba(255, 99, 132, 0.7)';
+                case "Package B":
+                    return 'rgba(75, 192, 192, 0.7)';
+                case "Package D":
+                    return 'rgba(153, 102, 255, 0.7)';
+                default:
+                    return 'rgba(169, 169, 169, 0.7)'; // Default gray
+            }
+        });
+
+        if (packageNames.length > 0 && bookingCounts.length > 0) {
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: packageNames,
+                    datasets: [{
+                        label: 'Number of Accepted Bookings',
+                        data: bookingCounts,
+                        backgroundColor: colors,
+                        borderColor: colors.map(color => color.replace('0.7', '1')),
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'top',
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return `${context.label}: ${context.raw}`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Packages'
+                            }
+                        },
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Number of Accepted Bookings'
+                            }
+                        }
+                    }
+                }
+            });
+        } else {
+            console.error("No data available for the chart.");
+        }
+    });
+</script>
+
+                    
         </div>
     </div>
 

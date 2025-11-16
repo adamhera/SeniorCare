@@ -34,7 +34,7 @@ public class DBConnection {
 * 
 * */
 
-/* ni guna database javadb*/
+/* ni guna database javadb
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -56,8 +56,8 @@ public class DBConnection {
     }
 }
 
-
-/*Ni guna oracle
+*/
+/*Ni guna oracle*/
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -86,4 +86,3 @@ public class DBConnection {
         return connection;
     }
 }
-*/

@@ -41,10 +41,10 @@ public class PatientDAO {
             }
 
             int rowsUpdated = stmt.executeUpdate();
-            return rowsUpdated > 0;  // Return true if the update was successful
+            return rowsUpdated > 0;  
         } catch (SQLException e) {
             e.printStackTrace();
-            return false;  // Return false if there's an exception
+            return false;  
         }
     }
 }

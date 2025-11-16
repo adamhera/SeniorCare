@@ -4,9 +4,9 @@
     Author     : adamh
 --%>
 <%@ page contentType="text/html" pageEncoding="UTF-8" %>
-<%@page import="java.sql.*"%>
-<%@page import="util.DBConnection"%>
-<%@page session="true" %>
+<%@ page import="java.sql.*" %>
+<%@ page import="util.DBConnection" %>
+<%@ page session="true" %>
 
 <%
     // Check if the admin is logged in
@@ -15,11 +15,20 @@
         return;
     }
 
-    // Establish database connection and fetch rejected employees
-    Connection conn = DBConnection.createConnection();
-    String query = "SELECT Emp_ID, Emp_Name, Emp_Email FROM Employee WHERE Status = 'Rejected'";
-    PreparedStatement stmt = conn.prepareStatement(query);
-    ResultSet rs = stmt.executeQuery();
+    Connection conn = null;
+    PreparedStatement stmt = null;
+    ResultSet rs = null;
+
+    try {
+        // Establish database connection and fetch rejected employees
+        conn = DBConnection.createConnection();
+        String query = "SELECT Emp_ID, Emp_Name, Emp_Email FROM Employee WHERE Status = 'Rejected'";
+        stmt = conn.prepareStatement(query);
+        rs = stmt.executeQuery();
+    } catch (SQLException e) {
+        e.printStackTrace();
+        out.println("<p>Error: Could not fetch data from the database.</p>");
+    }
 %>
 
 <!DOCTYPE html>
@@ -86,7 +95,8 @@
             <th>Action</th>
         </tr>
         <%
-            while (rs.next()) {
+            try {
+                while (rs != null && rs.next()) {
         %>
         <tr>
             <td><%= rs.getInt("Emp_ID") %></td>
@@ -100,11 +110,24 @@
             </td>
         </tr>
         <%
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+                out.println("<p>Error: Could not display the employee data.</p>");
             }
-            rs.close();
-            stmt.close();
-            conn.close();
         %>
     </table>
+    <a href="adminDashboard.jsp" class="back-link">Back to admin dashboard</a>
 </body>
 </html>
+
+<%
+    // Close the database resources in the finally block
+    try {
+        if (rs != null) rs.close();
+        if (stmt != null) stmt.close();
+        if (conn != null) conn.close();
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+%>

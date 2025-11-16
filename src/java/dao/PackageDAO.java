@@ -22,7 +22,7 @@ public class PackageDAO {
     public Package getPackageById(int packageId) throws Exception {
         Package pkg = null;
 
-        // Use DBConnection utility to get the connection
+        // Use DBConnection to get the connection
         try (Connection conn = DBConnection.createConnection()) {
             String query = "SELECT * FROM Package WHERE Package_ID = ?";
             PreparedStatement stmt = conn.prepareStatement(query);
@@ -47,7 +47,7 @@ public class PackageDAO {
     
    //guna 
    public boolean updatePackage(Package pkg) {
-    // Use DBConnection utility to get the connection
+    // Use DBConnection to get the connection
     try (Connection conn = DBConnection.createConnection()) {
         String query = "UPDATE Package SET Package_Name = ?, Package_Description = ?, Package_Price = ? WHERE Package_ID = ?";
         try (PreparedStatement stmt = conn.prepareStatement(query)) {
@@ -57,21 +57,21 @@ public class PackageDAO {
             stmt.setInt(4, pkg.getId());
 
             int rowsUpdated = stmt.executeUpdate();
-            return rowsUpdated > 0;  // If at least one row was updated, return true
+            return rowsUpdated > 0;  
         }
     } catch (SQLException e) {
-        // Log the exception (or print it for debugging)
+        
         e.printStackTrace();
-        return false;  // Return false if an error occurs
+        return false;  
     }
 }
 
    
-   // New method to retrieve all package names
+   //method to retrieve all package names
     public List<String> getAllPackageNames() {
         List<String> packageNames = new ArrayList<>();
 
-        // Use DBConnection utility to get the connection
+        // Use DBConnection to get the connection
         try (Connection conn = DBConnection.createConnection()) {
             String query = "SELECT Package_Name FROM Package";
             PreparedStatement stmt = conn.prepareStatement(query);

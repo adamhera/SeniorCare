@@ -243,6 +243,8 @@
     <div class="container">
         <!-- Welcome Header -->
         <header>
+            <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
             <h1>Welcome to Senior Care Connect, <%= patientFirstName %>!</h1>
         </header>
 
@@ -251,7 +253,8 @@
             <h2>Available Packages</h2>
             <div class="cards">
                 <%
-                    try (Connection conn = DriverManager.getConnection("jdbc:derby://localhost:1527/SeniorCareDB", "app", "app")) {
+                    //try (Connection conn = DriverManager.getConnection("jdbc:derby://localhost:1527/SeniorCareDB", "app", "app")) 
+                    try (Connection conn = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:xe", "SeniorCare", "system")){
                         String queryPackages = "SELECT Package_ID, Package_Name, Package_Description, Package_Price FROM Package";
                         try (PreparedStatement stmt = conn.prepareStatement(queryPackages)) {
                             ResultSet rs = stmt.executeQuery();
@@ -294,7 +297,8 @@
                     <th>Actions</th>
                 </tr>
                 <%
-                    try (Connection conn = DriverManager.getConnection("jdbc:derby://localhost:1527/SeniorCareDB", "app", "app")) {
+                    //try (Connection conn = DriverManager.getConnection("jdbc:derby://localhost:1527/SeniorCareDB", "app", "app")) 
+                    try (Connection conn = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:xe", "SeniorCare", "system")){
                         String queryBookings = "SELECT b.Booking_ID, p.Package_Name, b.Booking_Date, b.Booking_Time, p.Package_Price AS Amount_To_Pay, b.status FROM Booking b JOIN Package p ON b.Package_ID = p.Package_ID WHERE b.Patient_ID = ?";
                         try (PreparedStatement stmtBooking = conn.prepareStatement(queryBookings)) {
                             stmtBooking.setInt(1, patientID);
@@ -341,6 +345,68 @@
             </table>
         </div>
     </div>
+            
+            <div class="section">
+                <h2>Your Booking Quantity Over Time</h2>
+                <canvas id="bookingGraph"></canvas>
+            </div>
+<script>
+    var packageNames = [];
+    var bookingCounts = [];
+    
+    <% 
+        try (Connection conn = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:xe", "SeniorCare", "system")) {
+            String queryBookingByPackage = "SELECT p.Package_Name, COUNT(b.Booking_ID) AS Booking_Count " +
+                                           "FROM Booking b JOIN Package p ON b.Package_ID = p.Package_ID " +
+                                           "WHERE b.Patient_ID = ? " +
+                                           "GROUP BY p.Package_Name ORDER BY COUNT(b.Booking_ID) DESC";
+            try (PreparedStatement stmtBookingByPackage = conn.prepareStatement(queryBookingByPackage)) {
+                stmtBookingByPackage.setInt(1, patientID);
+                ResultSet rsBookingByPackage = stmtBookingByPackage.executeQuery();
+                while (rsBookingByPackage.next()) {
+                    out.print("packageNames.push('" + rsBookingByPackage.getString("Package_Name") + "');");
+                    out.print("bookingCounts.push(" + rsBookingByPackage.getInt("Booking_Count") + ");");
+                }
+                rsBookingByPackage.close();
+            }
+        } catch (Exception e) {
+            out.println("<p>Error: " + e.getMessage() + "</p>");
+        }
+    %>
+
+    var ctx = document.getElementById('bookingGraph').getContext('2d');
+    var bookingGraph = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: packageNames,
+            datasets: [{
+                label: 'Number of Bookings',
+                data: bookingCounts,
+                backgroundColor: 'rgba(75, 192, 192, 0.6)',
+                borderColor: 'rgba(75, 192, 192, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                x: {
+                    title: {
+                        display: true,
+                        text: 'Package'
+                    }
+                },
+                y: {
+                    title: {
+                        display: true,
+                        text: 'Number of Bookings'
+                    },
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+</script>
 
 
             <script>

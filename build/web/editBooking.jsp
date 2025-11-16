@@ -103,7 +103,7 @@
                 <option value="Package A" <%= "Package A".equals(request.getAttribute("packageName")) ? "selected" : "" %>>Package A</option>
                 <option value="Package B" <%= "Package B".equals(request.getAttribute("packageName")) ? "selected" : "" %>>Package B</option>
                 <option value="Package C" <%= "Package C".equals(request.getAttribute("packageName")) ? "selected" : "" %>>Package C</option>
-                <option value="Package D" <%= "Package D".equals(request.getAttribute("packageName")) ? "selected" : "" %>>Package D</option>
+                
             </select>
 
             <button type="submit">Save Changes</button>

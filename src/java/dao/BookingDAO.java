@@ -13,15 +13,22 @@ package dao;
 import com.seniorcare.model.Booking;
 import util.DBConnection;
 import java.sql.Connection;
+//import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Time;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Date;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class BookingDAO {
     
-    //guna
+    /*guna
     public boolean createBooking(int patientID, int packageID, String bookingDate, String bookingTime) {
         try (Connection conn = DBConnection.createConnection()) {
             String query = "INSERT INTO Booking (Patient_ID, Package_ID, Booking_Date, Booking_Time, Status) " +
@@ -39,9 +46,57 @@ public class BookingDAO {
             e.printStackTrace();
             return false;  // Return false if there's an exception
         }
-    }
+    }*/
+
+ // Create a new booking
+
+public boolean createBooking(int patientID, int packageID, String bookingDate, String bookingTime) {
+    try (Connection conn = DBConnection.createConnection()) {
+        // Debugging: print the bookingDate received
+        System.out.println("Booking Date received: " + bookingDate);
+
+        // Format the booking date to Oracle's standard format (YYYY-MM-DD)
+        String formattedBookingDate = bookingDate; // The bookingDate should be in YYYY-MM-DD format
         
-        //guna
+        // Ensure bookingTime is in HH:mm:ss format (add seconds if missing)
+        if (bookingTime != null && bookingTime.length() == 5) {
+            bookingTime = bookingTime + ":00"; // Add ":00" for seconds if missing
+        }
+
+        // Combine bookingDate and bookingTime into a single timestamp string
+        String bookingDateTime = formattedBookingDate + " " + bookingTime;
+
+        // Debugging: print out the formatted date and time
+        System.out.println("Formatted Booking Date: " + formattedBookingDate);
+        System.out.println("Formatted Booking Time: " + bookingTime);
+        System.out.println("Combined Booking DateTime: " + bookingDateTime);
+
+        // Prepare the SQL query to insert the booking
+        String query = "INSERT INTO Booking (BOOKING_ID, Patient_ID, Package_ID, Booking_Date, Booking_Time, Status) " +
+                       "VALUES (booking_id_seq.NEXTVAL, ?, ?, TO_DATE(?, 'YYYY-MM-DD'), TO_TIMESTAMP(?, 'YYYY-MM-DD HH24:MI:SS'), 'Pending')";
+
+        try (PreparedStatement stmt = conn.prepareStatement(query)) {
+            // Set the values in the PreparedStatement
+            stmt.setInt(1, patientID);  // Patient ID
+            stmt.setInt(2, packageID);  // Package ID
+            stmt.setString(3, formattedBookingDate);  // Booking Date (formatted as YYYY-MM-DD)
+            stmt.setString(4, bookingDateTime);  // Combined Booking DateTime
+
+            // Execute the query
+            int rowsInserted = stmt.executeUpdate();
+            return rowsInserted > 0;  // Return true if booking is successful
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+        return false;  // Return false if an exception occurs
+    }
+}
+
+
+
+
+
+        /*guna
         public boolean updateBooking(int bookingID, String bookingDate, String bookingTime, int packageID) {
         try (Connection conn = DBConnection.createConnection()) {
             String query = "UPDATE Booking SET Booking_Date = ?, Booking_Time = ?, Package_ID = ? " +
@@ -59,7 +114,38 @@ public class BookingDAO {
             e.printStackTrace();
             return false;  // Return false if there's an exception
         }
+    }*/
+
+public boolean updateBooking(int bookingID, String bookingDate, String bookingTime, int packageID) {
+    try (Connection conn = DBConnection.createConnection()) {
+        // Format the booking date and time as needed (ensure time format is HH:mm:ss)
+        if (bookingTime != null && bookingTime.length() == 5) {
+            bookingTime = bookingTime + ":00"; // Add ":00" if time format is HH:mm
+        }
+        String bookingDateTime = bookingDate + " " + bookingTime;
+
+        // Prepare the SQL query
+        String query = "UPDATE Booking SET Booking_Date = TO_DATE(?, 'YYYY-MM-DD'), " +
+                       "Booking_Time = TO_TIMESTAMP(?, 'YYYY-MM-DD HH24:MI:SS'), Package_ID = ? " +
+                       "WHERE Booking_ID = ?";
+
+        try (PreparedStatement stmt = conn.prepareStatement(query)) {
+            // Set parameters
+            stmt.setString(1, bookingDate);  // Booking Date
+            stmt.setString(2, bookingDateTime);  // Booking Date and Time
+            stmt.setInt(3, packageID);  // Package ID
+            stmt.setInt(4, bookingID);  // Booking ID
+
+            // Execute the update
+            int rowsUpdated = stmt.executeUpdate();
+            return rowsUpdated > 0;  // Return true if the booking was updated successfully
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+        return false;  // Return false if there's an exception
     }
+}
+
         
         //guna
         public boolean updateBookingStatus(int bookingId, String status, int empId) {
@@ -76,112 +162,6 @@ public class BookingDAO {
         }
         return false;
     }
-
-   /*     
-   public boolean approveBooking(int bookingId, int nurseId) {
-    Connection conn = null;
-    PreparedStatement stmt = null;
-    boolean isApproved = false;
-
-    try {
-        // Establish database connection
-        conn = DBConnection.createConnection();
-        
-        // Start a transaction (so that both operations are done atomically)
-        conn.setAutoCommit(false);
-
-        // 1. Update booking status to "Approved"
-        String updateBookingStatusQuery = "UPDATE Booking SET Status = 'Approved' WHERE Booking_ID = ?";
-        stmt = conn.prepareStatement(updateBookingStatusQuery);
-        stmt.setInt(1, bookingId);
-        int rowsUpdated = stmt.executeUpdate();
-
-        if (rowsUpdated > 0) {
-            // 2. Assign booking to the nurse
-            String assignNurseQuery = "INSERT INTO nurseBooking (nurse_id, booking_id) VALUES (?, ?)";
-            stmt = conn.prepareStatement(assignNurseQuery);
-            stmt.setInt(1, nurseId);
-            stmt.setInt(2, bookingId);
-            int rowsInserted = stmt.executeUpdate();
-
-            if (rowsInserted > 0) {
-                // Commit the transaction if both operations succeed
-                conn.commit();
-                isApproved = true;
-            } else {
-                // Rollback if the nurse assignment fails
-                conn.rollback();
-            }
-        } else {
-            // Rollback if the booking status update fails
-            conn.rollback();
-        }
-
-    } catch (SQLException e) {
-        e.printStackTrace();
-        try {
-            if (conn != null) {
-                conn.rollback(); // Rollback the transaction in case of error
-            }
-        } catch (SQLException se) {
-            se.printStackTrace();
-        }
-    } finally {
-        try {
-            if (stmt != null) stmt.close();
-            if (conn != null) conn.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
-        return isApproved;
-    }
-
-    
-    public boolean assignBookingToNurse(int nurseId, int bookingId) {
-        String query = "INSERT INTO nurseBooking (nurse_id, booking_id) VALUES (?, ?)";
-        try (Connection conn = DBConnection.createConnection();
-             PreparedStatement ps = conn.prepareStatement(query)) {
-            ps.setInt(1, nurseId);
-            ps.setInt(2, bookingId);
-
-            int rowsInserted = ps.executeUpdate();
-            return rowsInserted > 0;  // Return true if the insertion was successful
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return false;
-    }
-    
-    public List<Booking> getPendingBookings() {
-        List<Booking> bookings = new ArrayList<>();
-        String query = "SELECT b.Booking_ID, p.Patient_FName || ' ' || p.Patient_LName AS PatientName, " +
-                       "pk.Package_Name, b.Booking_Date, b.Booking_Time " +
-                       "FROM Booking b " +
-                       "JOIN Patient p ON b.Patient_ID = p.Patient_ID " +
-                       "JOIN Package pk ON b.Package_ID = pk.Package_ID " +
-                       "WHERE b.Status = 'Pending'";
-
-        try (Connection conn = DBConnection.createConnection();
-             PreparedStatement stmt = conn.prepareStatement(query);
-             ResultSet rs = stmt.executeQuery()) {
-
-            while (rs.next()) {
-                Booking booking = new Booking();
-                booking.setBookingId(rs.getInt("Booking_ID"));
-                booking.setPatientName(rs.getString("PatientName"));
-                booking.setPackageName(rs.getString("Package_Name"));
-                booking.setBookingDate(rs.getDate("Booking_Date"));
-                booking.setBookingTime(rs.getTime("Booking_Time"));
-                bookings.add(booking);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();  // Log error
-        }
-        return bookings;
-    }
-*/
     
     //guna
     public List<Booking> getPendingBookingsByPackage(String packageName) {
@@ -208,41 +188,24 @@ public class BookingDAO {
             bookings.add(booking);
         }
     } catch (SQLException e) {
-        e.printStackTrace();  // Log error
+        e.printStackTrace();  
     }
     return bookings;
     }
     
-    /*
-    public String getBookingStatus(int bookingId) {
-    String status = null;
-    String query = "SELECT Status FROM BOOKING WHERE Booking_ID = ?";
+    //guna
+    public boolean deleteBooking(int bookingID) {
+    String query = "DELETE FROM Booking WHERE Booking_ID = ?";
     try (Connection conn = DBConnection.createConnection();
-         PreparedStatement ps = conn.prepareStatement(query)) {
-        ps.setInt(1, bookingId);
-        ResultSet rs = ps.executeQuery();
-        if (rs.next()) {
-            status = rs.getString("Status");
-        }
+         PreparedStatement stmt = conn.prepareStatement(query)) {
+        stmt.setInt(1, bookingID);
+        int rowsDeleted = stmt.executeUpdate();
+        return rowsDeleted > 0;  // Return true if deletion is successful
     } catch (SQLException e) {
         e.printStackTrace();
     }
-    return status;
-    }
+    return false;  
+}
 
-    
-    public boolean deleteBooking(int bookingId) {
-    String query = "DELETE FROM BOOKING WHERE Booking_ID = ?";
-    try (Connection conn = DBConnection.createConnection();
-         PreparedStatement ps = conn.prepareStatement(query)) {
-        ps.setInt(1, bookingId);
-        int rowsAffected = ps.executeUpdate();
-        return rowsAffected > 0;
-    } catch (SQLException e) {
-        e.printStackTrace();
-    }
-    return false;
-    }
-    */
 }
 

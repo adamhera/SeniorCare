@@ -53,7 +53,7 @@ public class DeleteEmployeeServlet extends HttpServlet {
             // Handle invalid number format
             e.printStackTrace();
         } catch (SQLException e) {
-            // Handle SQL errors
+                // Handle SQL errors
             e.printStackTrace();
         }
 

@@ -3,16 +3,25 @@
     <session-config>
         <session-timeout>30</session-timeout>
     </session-config>
-    
     <!-- JDBC Resource Reference -->
+    <welcome-file-list>
+        <welcome-file>home.jsp</welcome-file>
+    </welcome-file-list>
     <resource-ref>
         <res-ref-name>jdbc/myDatasource</res-ref-name>
         <res-type>javax.sql.DataSource</res-type>
         <res-auth>Container</res-auth>
         <res-sharing-scope>Shareable</res-sharing-scope>
     </resource-ref>
-
     <!-- Servlet Definitions -->
+    <servlet>
+        <servlet-name>RegisterPatientServlet</servlet-name>
+        <servlet-class>RegisterPatientServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>RegisterPatientServlet</servlet-name>
+        <url-pattern>/RegisterPatientServlet</url-pattern>
+    </servlet-mapping>
     <servlet>
         <servlet-name>LoginPatientServlet</servlet-name>
         <servlet-class>LoginPatientServlet</servlet-class>
@@ -21,7 +30,22 @@
         <servlet-name>LoginPatientServlet</servlet-name>
         <url-pattern>/LoginPatientServlet</url-pattern>
     </servlet-mapping>
-
+    <servlet>
+        <servlet-name>EditPatientInfoServlet</servlet-name>
+        <servlet-class>EditPatientInfoServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>EditPatientInfoServlet</servlet-name>
+        <url-pattern>/EditPatientInfoServlet</url-pattern>
+    </servlet-mapping>
+    <servlet>
+        <servlet-name>EmployeeRegisterServlet</servlet-name>
+        <servlet-class>EmployeeRegisterServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>EmployeeRegisterServlet</servlet-name>
+        <url-pattern>/EmployeeRegisterServlet</url-pattern>
+    </servlet-mapping>
     <servlet>
         <servlet-name>EmployeeLoginServlet</servlet-name>
         <servlet-class>EmployeeLoginServlet</servlet-class>
@@ -30,25 +54,92 @@
         <servlet-name>EmployeeLoginServlet</servlet-name>
         <url-pattern>/EmployeeLoginServlet</url-pattern>
     </servlet-mapping>
-    
     <servlet>
-    <servlet-name>EditPatientInfoServlet</servlet-name>
-    <servlet-class>EditPatientInfoServlet</servlet-class>
-</servlet>
-<servlet-mapping>
-    <servlet-name>EditPatientInfoServlet</servlet-name>
-    <url-pattern>/EditPatientInfoServlet</url-pattern>
-</servlet-mapping>
-
-
-<servlet>
-    <servlet-name>BookingServlet</servlet-name>
-    <servlet-class>BookingServlet</servlet-class>
-</servlet>
-
-<servlet-mapping>
-    <servlet-name>BookingServlet</servlet-name>
-    <url-pattern>/BookingServlet</url-pattern>
-</servlet-mapping>
-
+        <servlet-name>UpdateAdminProfileServlet</servlet-name>
+        <servlet-class>UpdateAdminProfileServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>UpdateAdminProfileServlet</servlet-name>
+        <url-pattern>/UpdateAdminProfileServlet</url-pattern>
+    </servlet-mapping>
+    <servlet>
+        <servlet-name>UpdateNurseInfoServlet</servlet-name>
+        <servlet-class>UpdateNurseInfoServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>UpdateNurseInfoServlet</servlet-name>
+        <url-pattern>/UpdateNurseInfoServlet</url-pattern>
+    </servlet-mapping>
+    <servlet>
+        <servlet-name>DeleteEmployeeServlet</servlet-name>
+        <servlet-class>DeleteEmployeeServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>DeleteEmployeeServlet</servlet-name>
+        <url-pattern>/DeleteEmployeeServlet</url-pattern>
+    </servlet-mapping>
+    <servlet>
+        <servlet-name>ApproveRejectServlet</servlet-name>
+        <servlet-class>ApproveRejectServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>ApproveRejectServlet</servlet-name>
+        <url-pattern>/ApproveRejectServlet</url-pattern>
+    </servlet-mapping>
+    <servlet>
+        <servlet-name>PendingApprovalServlet</servlet-name>
+        <servlet-class>PendingApprovalServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>PendingApprovalServlet</servlet-name>
+        <url-pattern>/PendingApprovalServlet</url-pattern>
+    </servlet-mapping>
+    <servlet>
+        <servlet-name>BookingServlet</servlet-name>
+        <servlet-class>BookingServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>BookingServlet</servlet-name>
+        <url-pattern>/BookingServlet</url-pattern>
+    </servlet-mapping>
+    <servlet>
+        <servlet-name>UpdateBookingStatusServlet</servlet-name>
+        <servlet-class>UpdateBookingStatusServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>UpdateBookingStatusServlet</servlet-name>
+        <url-pattern>/UpdateBookingStatusServlet</url-pattern>
+    </servlet-mapping>
+    <servlet>
+        <servlet-name>EditBookingServlet</servlet-name>
+        <servlet-class>EditBookingServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>EditBookingServlet</servlet-name>
+        <url-pattern>/EditBookingServlet</url-pattern>
+    </servlet-mapping>
+    <servlet>
+        <servlet-name>EditPackageServlet</servlet-name>
+        <servlet-class>EditPackageServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>EditPackageServlet</servlet-name>
+        <url-pattern>/EditPackageServlet</url-pattern>
+    </servlet-mapping>
+    <servlet>
+        <servlet-name>LogoutServlet</servlet-name>
+        <servlet-class>LogoutServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>LogoutServlet</servlet-name>
+        <url-pattern>/LogoutServlet</url-pattern>
+    </servlet-mapping>
+    <servlet>
+        <servlet-name>CancelBookingServlet</servlet-name>
+        <servlet-class>CancelBookingServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>CancelBookingServlet</servlet-name>
+        <url-pattern>/CancelBookingServlet</url-pattern>
+    </servlet-mapping>
 </web-app>

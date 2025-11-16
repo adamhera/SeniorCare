@@ -21,18 +21,19 @@ public class ApproveRejectServlet extends HttpServlet {
         String action = request.getParameter("action"); // Approve or Reject
         String newStatus = action.equals("Approve") ? "Approved" : "Rejected";
 
-        try (Connection conn = DriverManager.getConnection("jdbc:derby://localhost:1527/SeniorCareDB", "app", "app")) {
+        //try (Connection conn = DriverManager.getConnection("jdbc:derby://localhost:1527/SeniorCareDB", "app", "app")) 
+        try (Connection conn = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:xe", "SeniorCare", "system")){
             conn.setAutoCommit(false);
 
-            // Step 1: Update Employee Status
-            String updateEmployeeQuery = "UPDATE Employee SET Status = ? WHERE Emp_ID = ?";
+            // Update Employee Status
+            String updateEmployeeQuery = "UPDATE Employee SET Status = ? UPDATEWHERE Emp_ID = ?";
             try (PreparedStatement stmtUpdate = conn.prepareStatement(updateEmployeeQuery)) {
                 stmtUpdate.setString(1, newStatus);
                 stmtUpdate.setInt(2, empID);
                 stmtUpdate.executeUpdate();
             }
 
-            // Step 2: Check if Approved and Insert into Role Table
+            // Check if Approved and Insert into Role Table
             if ("Approved".equalsIgnoreCase(action)) {
                 String getRoleQuery = "SELECT Emp_Role FROM Employee WHERE Emp_ID = ?";
                 try (PreparedStatement stmtGetRole = conn.prepareStatement(getRoleQuery)) {
